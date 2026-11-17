@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#4f46e5">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="icon" href="icon.svg" type="image/svg+xml">
+    <title>Jogos Integrados - Inscrições</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        
+        /* Custom Scrollbar for textareas */
+        textarea::-webkit-scrollbar { width: 8px; }
+        textarea::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+        textarea::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        textarea::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        /* Toast animation */
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateX(0); }
+            to { opacity: 0; transform: translateX(100%); }
+        }
+        .toast-enter { animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .toast-leave { animation: fadeOut 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+        /* Modal Animation */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal-enter { animation: fadeIn 0.2s ease-out forwards; }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen text-slate-800">
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-3 pointer-events-none"></div>
+
+    <!-- Custom Confirm Modal -->
+    <div id="confirm-modal" class="hidden fixed inset-0 bg-slate-900 bg-opacity-50 z-50 flex items-center justify-center modal-enter backdrop-blur-sm px-4">
+        <div class="bg-white rounded-xl p-6 max-w-sm w-full shadow-2xl transform transition-all">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="bg-red-100 p-2 rounded-full text-red-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
+                </div>
+                <h3 class="text-xl font-bold text-slate-800">Limpar Inscrições</h3>
+            </div>
+            <p class="text-sm text-slate-600 mb-6">Tem certeza que deseja apagar todas as inscrições registradas? <br><br><strong>Nota:</strong> A lista base de alunos carregada pelo administrador continuará salva.</p>
+            <div class="flex justify-end gap-3">
+                <button onclick="closeModal()" class="px-4 py-2 text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors duration-200">Cancelar</button>
+                <button onclick="confirmClear()" class="px-4 py-2 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 shadow-sm rounded-lg transition-colors duration-200">Sim, apagar tudo</button>
+            </div>
+        </div>
+    </div>
+
+    <header class="bg-indigo-600 text-white shadow-md py-6 mb-8">
+        <div class="max-w-7xl mx-auto px-4 text-center sm:text-left flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div>
+                <h1 class="text-2xl sm:text-3xl font-bold flex items-center gap-2 justify-center sm:justify-start">
+                    🏆 Jogos Escolares Integrados
+                </h1>
+                <p class="mt-1 text-indigo-100 text-sm sm:text-base">Sistema de Gerenciamento de Inscrições</p>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 pb-12 grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- Coluna da Esquerda: Cadastros e Formulários -->
+        <div class="lg:col-span-4 flex flex-col gap-6">
+            
+            <!-- Painel 1: Lista de Alunos (Admin) -->
+            <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-semibold text-slate-800 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-500"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><polyline points="16 11 18 13 22 9"></polyline></svg>
+                        1. Base de Estudantes
+                    </h2>
+                    <span class="text-[10px] uppercase font-bold bg-indigo-50 text-indigo-600 px-2 py-1 rounded-md border border-indigo-100 tracking-wider">Admin</span>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Turma dos Estudantes</label>
+                    <input type="text" id="admin-turma" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition shadow-inner text-sm" placeholder="Ex: 2º A, 3º BETA">
+                </div>
+                
+                <p class="text-sm text-slate-500 mb-2">Insira os nomes dos estudantes (um por linha):</p>
+                <textarea id="student-list-input" rows="4" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition text-sm resize-none" placeholder="Ex:&#10;João Silva&#10;Maria Souza&#10;Pedro Henrique"></textarea>
+                
+                <div class="flex gap-2 mt-3">
+                    <button onclick="clearBase()" class="w-1/3 bg-white border border-red-200 text-red-600 hover:bg-red-50 py-2.5 rounded-lg font-medium transition duration-200 shadow-sm flex justify-center items-center gap-1 text-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                        Limpar
+                    </button>
+                    <button onclick="loadStudents()" class="w-2/3 bg-slate-800 hover:bg-slate-700 text-white py-2.5 rounded-lg font-medium transition duration-200 shadow-sm flex justify-center items-center gap-2 text-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                        Adicionar
+                    </button>
+                </div>
+                <p class="text-xs text-slate-400 mt-3 text-center">Total na base: <span id="student-count" class="font-bold text-slate-600">0</span> estudantes</p>
+
+                <button onclick="exportStudentBaseToCSV()" class="w-full mt-3 bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-lg font-semibold text-sm shadow-sm transition flex items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    Exportar base de estudantes (CSV)
+                </button>
+                <input id="student-base-file" type="file" accept=".csv,text/csv" class="hidden" onchange="importStudentBaseFromCSV(event)">
+                <button onclick="document.getElementById('student-base-file').click()" class="w-full mt-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 py-2.5 rounded-lg font-semibold text-sm transition flex items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                    Carregar base de estudantes (CSV)
+                </button>
+                <p class="text-xs text-slate-400 mt-1">Importa Nome e Turma do CSV; nomes já existentes terão a turma atualizada.</p>
+                <div class="mt-4 border-t border-slate-100 pt-4">
+                    <label for="clear-turma-select" class="block text-sm font-medium text-slate-700 mb-1">Remover uma turma da base</label>
+                    <div class="flex gap-2">
+                        <select id="clear-turma-select" class="min-w-0 flex-1 p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:bg-white focus:ring-2 focus:ring-indigo-500 outline-none">
+                            <option value="">Selecione uma turma</option>
+                        </select>
+                        <button id="clear-turma-button" onclick="clearClassFromBase()" disabled class="shrink-0 bg-white border border-red-200 text-red-600 hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed px-3 py-2 rounded-lg font-medium text-sm transition">
+                            Limpar turma
+                        </button>
+                    </div>
+                    <p class="text-xs text-slate-400 mt-2">Remove os estudantes da turma selecionada. Inscrições já registradas serão mantidas.</p>
+                </div>
+            </section>
+
+            <!-- Painel 2: Formulário de Inscrição -->
+            <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+                <h2 class="text-lg font-semibold text-slate-800 mb-5 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-500"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                    2. Realizar Inscrição
+                </h2>
+                
+                <!-- Busca de Estudante -->
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Buscar Estudante</label>
+                    <input type="text" id="student-search" oninput="autoFillTurma()" list="students-datalist" class="w-full p-3 bg-slate-50 border border-slate-300 rounded-lg focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition shadow-inner" placeholder="Digite ou selecione o nome...">
+                    <datalist id="students-datalist"></datalist>
+                </div>
+
+                <!-- Turma -->
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Turma</label>
+                    <input type="text" id="student-turma" class="w-full p-3 bg-slate-50 border border-slate-300 rounded-lg focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition shadow-inner" placeholder="Ex: 2º A, 3º BETA">
+                </div>
+
+                <!-- Gênero -->
+                <div class="mb-5">
+                    <label class="block text-sm font-medium text-slate-700 mb-2">Gênero</label>
+                    <div class="flex gap-4">
+                        <label class="flex items-center space-x-2 cursor-pointer p-2 border border-slate-200 rounded-lg bg-slate-50 hover:bg-white transition flex-1">
+                            <input type="radio" name="gender" value="Feminino" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer">
+                            <span class="text-sm font-medium text-slate-700">Feminino</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer p-2 border border-slate-200 rounded-lg bg-slate-50 hover:bg-white transition flex-1">
+                            <input type="radio" name="gender" value="Masculino" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer">
+                            <span class="text-sm font-medium text-slate-700">Masculino</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Seleção de Equipe -->
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-slate-700 mb-2">Equipe</label>
+                    <div class="grid grid-cols-2 gap-3" id="team-selector">
+                        <label class="cursor-pointer relative">
+                            <input type="radio" name="team" value="Azul" class="peer sr-only">
+                            <div class="rounded-lg border-2 border-slate-200 bg-white py-2.5 px-3 text-center font-semibold text-blue-600 hover:bg-blue-50 peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:shadow-sm transition duration-200">🔵 Azul</div>
+                        </label>
+                        <label class="cursor-pointer relative">
+                            <input type="radio" name="team" value="Amarelo" class="peer sr-only">
+                            <div class="rounded-lg border-2 border-slate-200 bg-white py-2.5 px-3 text-center font-semibold text-yellow-500 hover:bg-yellow-50 peer-checked:border-yellow-400 peer-checked:bg-yellow-50 peer-checked:shadow-sm transition duration-200">🟡 Amarelo</div>
+                        </label>
+                        <label class="cursor-pointer relative">
+                            <input type="radio" name="team" value="Verde" class="peer sr-only">
+                            <div class="rounded-lg border-2 border-slate-200 bg-white py-2.5 px-3 text-center font-semibold text-green-600 hover:bg-green-50 peer-checked:border-green-500 peer-checked:bg-green-50 peer-checked:shadow-sm transition duration-200">🟢 Verde</div>
+                        </label>
+                        <label class="cursor-pointer relative">
+                            <input type="radio" name="team" value="Vermelho" class="peer sr-only">
+                            <div class="rounded-lg border-2 border-slate-200 bg-white py-2.5 px-3 text-center font-semibold text-red-600 hover:bg-red-50 peer-checked:border-red-500 peer-checked:bg-red-50 peer-checked:shadow-sm transition duration-200">🔴 Vermelho</div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Seleção de Modalidade -->
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-slate-700 mb-2">Modalidades (Múltipla Escolha)</label>
+                    <div class="grid grid-cols-2 gap-3" id="modality-selector">
+                        <label class="flex items-center space-x-2 cursor-pointer p-2.5 border border-slate-200 bg-slate-50 rounded-lg hover:bg-white hover:border-slate-300 transition duration-200">
+                            <input type="checkbox" name="modality" value="Dodboll" class="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer">
+                            <span class="text-sm font-medium text-slate-700">🤾 Dodboll</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer p-2.5 border border-slate-200 bg-slate-50 rounded-lg hover:bg-white hover:border-slate-300 transition duration-200">
+                            <input type="checkbox" name="modality" value="Futsal" class="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer">
+                            <span class="text-sm font-medium text-slate-700">⚽ Futsal</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer p-2.5 border border-slate-200 bg-slate-50 rounded-lg hover:bg-white hover:border-slate-300 transition duration-200">
+                            <input type="checkbox" name="modality" value="Peteca" class="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer">
+                            <span class="text-sm font-medium text-slate-700">🏸 Peteca</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer p-2.5 border border-slate-200 bg-slate-50 rounded-lg hover:bg-white hover:border-slate-300 transition duration-200">
+                            <input type="checkbox" name="modality" value="Jogos e Brincadeiras" class="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer">
+                            <span class="text-sm font-medium text-slate-700">🎲 Jogos e Brincadeiras</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer p-2.5 border border-slate-200 bg-slate-50 rounded-lg hover:bg-white hover:border-slate-300 transition duration-200">
+                            <input type="checkbox" name="modality" value="Natação" class="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer">
+                            <span class="text-sm font-medium text-slate-700">🏊 Natação</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer p-2.5 border border-slate-200 bg-slate-50 rounded-lg hover:bg-white hover:border-slate-300 transition duration-200">
+                            <input type="checkbox" name="modality" value="Voleibol" class="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer">
+                            <span class="text-sm font-medium text-slate-700">🏐 Voleibol</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer p-2.5 border border-slate-200 bg-slate-50 rounded-lg hover:bg-white hover:border-slate-300 transition duration-200">
+                            <input type="checkbox" name="modality" value="Tenis de mesa" class="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer">
+                            <span class="text-sm font-medium text-slate-700">🏓 Tenis de mesa</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer p-2.5 border border-slate-200 bg-slate-50 rounded-lg hover:bg-white hover:border-slate-300 transition duration-200">
+                            <input type="checkbox" name="modality" value="Totó" class="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer">
+                            <span class="text-sm font-medium text-slate-700">⚽ Totó</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer p-2.5 border border-slate-200 bg-slate-50 rounded-lg hover:bg-white hover:border-slate-300 transition duration-200">
+                            <input type="checkbox" name="modality" value="Xadrez" class="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer">
+                            <span class="text-sm font-medium text-slate-700">♟️ Xadrez</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer p-2.5 border border-slate-200 bg-slate-50 rounded-lg hover:bg-white hover:border-slate-300 transition duration-200">
+                            <input type="checkbox" name="modality" value="Jogos Eletrônicos" class="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer">
+                            <span class="text-sm font-medium text-slate-700">🎮 Jogos Eletrônicos</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer p-2.5 border border-slate-200 bg-slate-50 rounded-lg hover:bg-white hover:border-slate-300 transition duration-200">
+                            <input type="checkbox" name="modality" value="Oficina de Artes" class="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer">
+                            <span class="text-sm font-medium text-slate-700">🎨 Oficina de Artes</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer p-2.5 border border-slate-200 bg-slate-50 rounded-lg hover:bg-white hover:border-slate-300 transition duration-200">
+                            <input type="checkbox" name="modality" value="Cubo mágico" class="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer">
+                            <span class="text-sm font-medium text-slate-700">🧩 Cubo mágico</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer p-2.5 border border-slate-200 bg-slate-50 rounded-lg hover:bg-white hover:border-slate-300 transition duration-200">
+                            <input type="checkbox" name="modality" value="Batalha Sumo Robótico" class="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer">
+                            <span class="text-sm font-medium text-slate-700">🤖 Batalha Sumo Robótico</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer p-2.5 border border-slate-200 bg-slate-50 rounded-lg hover:bg-white hover:border-slate-300 transition duration-200">
+                            <input type="checkbox" name="modality" value="Torta na Cara" class="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer">
+                            <span class="text-sm font-medium text-slate-700">🥧 Torta na Cara</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer p-2.5 border border-slate-200 bg-slate-50 rounded-lg hover:bg-white hover:border-slate-300 transition duration-200">
+                            <input type="checkbox" name="modality" value="Uno" class="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer">
+                            <span class="text-sm font-medium text-slate-700">🃏 Uno</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer p-2.5 border border-slate-200 bg-slate-50 rounded-lg hover:bg-white hover:border-slate-300 transition duration-200">
+                            <input type="checkbox" name="modality" value="Soletrando" class="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer">
+                            <span class="text-sm font-medium text-slate-700">🔤 Soletrando</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer p-2.5 border border-slate-200 bg-slate-50 rounded-lg hover:bg-white hover:border-slate-300 transition duration-200">
+                            <input type="checkbox" name="modality" value="Quizz" class="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer">
+                            <span class="text-sm font-medium text-slate-700">❓ Quizz</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button onclick="registerStudent()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3.5 rounded-lg font-bold text-base shadow-md hover:shadow-lg transition-all duration-200 flex justify-center items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                    Inscrever Estudante
+                </button>
+            </section>
+        </div>
+
+        <!-- Coluna da Direita: Painel de Equipes -->
+        <div class="lg:col-span-8">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 h-full flex flex-col">
+                
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 border-b border-slate-100 pb-4">
+                    <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-500"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+                        Painel de Inscritos
+                    </h2>
+                    
+                    <!-- Botões de Ação Globais -->
+                    <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
+                        <button onclick="exportBoard()" class="flex-1 md:flex-none flex items-center justify-center gap-2 text-sm bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors shadow-sm font-semibold">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                            Exportar Quadro
+                        </button>
+                        <button onclick="exportToCSV()" class="flex-1 md:flex-none flex items-center justify-center gap-2 text-sm bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors shadow-sm font-semibold">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                            Exportar (CSV)
+                        </button>
+                        <button onclick="openModal()" class="flex-1 md:flex-none flex items-center justify-center gap-2 text-sm bg-white border border-red-200 text-red-600 hover:bg-red-50 px-4 py-2 rounded-lg transition-colors font-medium">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            Limpar
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 xl:grid-cols-2 gap-5 flex-grow">
+                    
+                    <!-- Equipe Azul -->
+                    <div class="border border-blue-200 rounded-xl overflow-hidden flex flex-col bg-blue-50/30">
+                        <div class="bg-blue-600 text-white p-3 font-bold flex justify-between items-center shadow-sm">
+                            <div class="flex items-center gap-2"><span>🔵 Equipe Azul</span></div>
+                            <span id="count-azul" class="bg-white/20 px-2.5 py-0.5 rounded-full text-sm font-semibold">0</span>
+                        </div>
+                        <div class="p-3 flex-grow">
+                            <ul id="list-azul" class="space-y-2 text-sm empty:hidden"></ul>
+                            <div id="empty-azul" class="text-center text-slate-400 py-8 text-sm italic">Nenhum inscrito.</div>
+                        </div>
+                    </div>
+
+                    <!-- Equipe Amarela -->
+                    <div class="border border-yellow-300 rounded-xl overflow-hidden flex flex-col bg-yellow-50/30">
+                        <div class="bg-yellow-400 text-yellow-900 p-3 font-bold flex justify-between items-center shadow-sm">
+                            <div class="flex items-center gap-2"><span>🟡 Equipe Amarela</span></div>
+                            <span id="count-amarelo" class="bg-black/10 px-2.5 py-0.5 rounded-full text-sm font-semibold">0</span>
+                        </div>
+                        <div class="p-3 flex-grow">
+                            <ul id="list-amarelo" class="space-y-2 text-sm empty:hidden"></ul>
+                            <div id="empty-amarelo" class="text-center text-slate-400 py-8 text-sm italic">Nenhum inscrito.</div>
+                        </div>
+                    </div>
+
+                    <!-- Equipe Verde -->
+                    <div class="border border-green-200 rounded-xl overflow-hidden flex flex-col bg-green-50/30">
+                        <div class="bg-green-600 text-white p-3 font-bold flex justify-between items-center shadow-sm">
+                            <div class="flex items-center gap-2"><span>🟢 Equipe Verde</span></div>
+                            <span id="count-verde" class="bg-white/20 px-2.5 py-0.5 rounded-full text-sm font-semibold">0</span>
+                        </div>
+                        <div class="p-3 flex-grow">
+                            <ul id="list-verde" class="space-y-2 text-sm empty:hidden"></ul>
+                            <div id="empty-verde" class="text-center text-slate-400 py-8 text-sm italic">Nenhum inscrito.</div>
+                        </div>
+                    </div>
+
+                    <!-- Equipe Vermelha -->
+                    <div class="border border-red-200 rounded-xl overflow-hidden flex flex-col bg-red-50/30">
+                        <div class="bg-red-600 text-white p-3 font-bold flex justify-between items-center shadow-sm">
+                            <div class="flex items-center gap-2"><span>🔴 Equipe Vermelha</span></div>
+                            <span id="count-vermelho" class="bg-white/20 px-2.5 py-0.5 rounded-full text-sm font-semibold">0</span>
+                        </div>
+                        <div class="p-3 flex-grow">
+                            <ul id="list-vermelho" class="space-y-2 text-sm empty:hidden"></ul>
+                            <div id="empty-vermelho" class="text-center text-slate-400 py-8 text-sm italic">Nenhum inscrito.</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // State variables
+        let validStudents = [];
+        let registrations = [];
+
+        const modalityIcons = {
+            'Dodboll': '🤾',
+            'Futsal': '⚽',
+            'Peteca': '🏸',
+            'Jogos e Brincadeiras': '🎲',
+            'Natação': '🏊',
+            'Voleibol': '🏐',
+            'Tenis de mesa': '🏓',
+            'Totó': '⚽',
+            'Xadrez': '♟️',
+            'Jogos Eletrônicos': '🎮',
+            'Oficina de Artes': '🎨',
+            'Cubo mágico': '🧩',
+            'Batalha Sumo Robótico': '🤖',
+            'Torta na Cara': '🥧',
+            'Uno': '🃏',
+            'Soletrando': '🔤',
+            'Quizz': '❓',
+            'Futebol': '⚽',
+            'Queimada': '🤾',
+            'Vôlei': '🏐',
+            'Robótica': '🤖'
+        };        window.onload = () => {
+            loadState();
+            updateDatalist();
+            renderDashboard();
+        };
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            const icons = {
+                success: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>',
+                error: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>',
+                info: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>'
+            };
+
+            let colors = 'bg-slate-800 text-white';
+            if (type === 'error') colors = 'bg-red-600 text-white';
+            if (type === 'success') colors = 'bg-green-600 text-white';
+
+            toast.className = `toast-enter ${colors} px-4 py-3 rounded-lg shadow-lg text-sm font-medium flex items-center gap-3 pointer-events-auto w-max max-w-sm`;
+            toast.innerHTML = `<div class="flex-shrink-0">${icons[type]}</div><div>${message}</div>`;
+            
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.replace('toast-enter', 'toast-leave');
+                setTimeout(() => toast.remove(), 400);
+            }, 4000);
+        }
+
+        function openModal() { document.getElementById('confirm-modal').classList.remove('hidden'); }
+        function closeModal() { document.getElementById('confirm-modal').classList.add('hidden'); }
+
+        function confirmClear() {
+            registrations = [];
+            saveState();
+            renderDashboard();
+            closeModal();
+            showToast('Todas as inscrições foram apagadas.', 'info');
+        }
+
+        function clearBase() {
+            validStudents = [];
+            saveState();
+            updateDatalist();
+            document.getElementById('student-list-input').value = '';
+            document.getElementById('admin-turma').value = '';
+            showToast('Base de estudantes limpa com sucesso.', 'info');
+        }
+
+        function clearClassFromBase() {
+            const select = document.getElementById('clear-turma-select');
+            const selectedTurma = select.value;
+            if (!selectedTurma) {
+                showToast('Selecione uma turma para limpar.', 'error');
+                return;
+            }
+
+            const normalizedTurma = selectedTurma.trim().toLocaleLowerCase('pt-BR');
+            const studentsInClass = validStudents.filter(student =>
+                student.turma.trim().toLocaleLowerCase('pt-BR') === normalizedTurma
+            ).length;
+
+            if (!studentsInClass) {
+                showToast('Não há estudantes nessa turma na base.', 'error');
+                return;
+            }
+
+            if (!window.confirm(`Remover ${studentsInClass} estudante(s) da turma ${selectedTurma} da base? As inscrições já registradas serão mantidas.`)) return;
+
+            validStudents = validStudents.filter(student =>
+                student.turma.trim().toLocaleLowerCase('pt-BR') !== normalizedTurma
+            );
+            saveState();
+            updateDatalist();
+            showToast(`${studentsInClass} estudante(s) removido(s) da turma ${selectedTurma}.`, 'success');
+        }
+        function loadStudents() {
+            const adminTurma = document.getElementById('admin-turma').value.trim();
+            const inputText = document.getElementById('student-list-input').value;
+            
+            if (!adminTurma) {
+                showToast('Por favor, informe a Turma antes de adicionar os alunos.', 'error');
+                return;
+            }
+
+            const names = inputText.split('\n').map(name => name.trim()).filter(name => name.length > 0);
+            
+            if (names.length === 0) {
+                showToast('Por favor, insira pelo menos um nome.', 'error');
+                return;
+            }
+
+            let addedCount = 0;
+            names.forEach(name => {
+                const existingIndex = validStudents.findIndex(s => s.name.toLowerCase() === name.toLowerCase());
+                if (existingIndex === -1) {
+                    validStudents.push({ name: name, turma: adminTurma });
+                    addedCount++;
+                } else {
+                    validStudents[existingIndex].turma = adminTurma; // Atualiza a turma caso o aluno já exista
+                }
+            });
+
+            saveState();
+            updateDatalist();
+            document.getElementById('student-list-input').value = ''; // Limpa a caixa de texto para a próxima turma
+            showToast(`${addedCount} novos estudantes adicionados à Turma ${adminTurma}!`, 'success');
+        }
+
+        function updateDatalist() {
+            const datalist = document.getElementById('students-datalist');
+            datalist.innerHTML = '';
+            validStudents.forEach(student => {
+                const option = document.createElement('option');
+                option.value = student.name;
+                datalist.appendChild(option);
+            });
+
+            const classSelect = document.getElementById('clear-turma-select');
+            const selectedClass = classSelect.value;
+            const classes = [...new Set(validStudents.map(student => student.turma.trim()).filter(Boolean))]
+                .sort((a, b) => a.localeCompare(b, 'pt-BR', { sensitivity: 'base' }));
+            classSelect.innerHTML = '<option value="">Selecione uma turma</option>';
+            classes.forEach(className => {
+                const option = document.createElement('option');
+                option.value = className;
+                option.textContent = className;
+                classSelect.appendChild(option);
+            });
+            if (classes.includes(selectedClass)) classSelect.value = selectedClass;
+            document.getElementById('clear-turma-button').disabled = classes.length === 0;
+            document.getElementById('student-count').textContent = validStudents.length;
+        }
+
+        function autoFillTurma() {
+            const searchInput = document.getElementById('student-search').value.trim();
+            const student = validStudents.find(s => s.name.toLowerCase() === searchInput.toLowerCase());
+            if (student) {
+                document.getElementById('student-turma').value = student.turma;
+            }
+        }
+
+        function registerStudent() {
+            const searchInput = document.getElementById('student-search').value.trim();
+            const turmaInput = document.getElementById('student-turma').value.trim();
+            const selectedGender = document.querySelector('input[name="gender"]:checked')?.value;
+            const selectedTeam = document.querySelector('input[name="team"]:checked')?.value;
+            const selectedModalities = Array.from(document.querySelectorAll('input[name="modality"]:checked')).map(cb => cb.value);
+
+            if (!searchInput) { showToast('Selecione ou digite o nome de um estudante.', 'error'); return; }
+            if (validStudents.length > 0 && !validStudents.some(s => s.name.toLowerCase() === searchInput.toLowerCase())) { showToast('Estudante não encontrado na base de dados.', 'error'); return; }
+            if (!turmaInput) { showToast('Por favor, informe a Turma.', 'error'); return; }
+            if (!selectedGender) { showToast('Por favor, selecione o Gênero.', 'error'); return; }
+            if (!selectedTeam) { showToast('Por favor, selecione uma Equipe.', 'error'); return; }
+            if (selectedModalities.length === 0) { showToast('Selecione pelo menos uma Modalidade.', 'error'); return; }
+
+            const existingIndex = registrations.findIndex(r => r.name.toLowerCase() === searchInput.toLowerCase());
+            if (existingIndex > -1) { showToast('Este estudante já está inscrito.', 'error'); return; }
+
+            registrations.push({
+                name: searchInput,
+                turma: turmaInput,
+                gender: selectedGender,
+                team: selectedTeam,
+                modality: selectedModalities, 
+                timestamp: new Date().getTime()
+            });
+
+            saveState();
+            renderDashboard();
+            resetForm();
+            showToast(`${searchInput} inscrito na Equipe ${selectedTeam}!`, 'success');
+        }
+
+        function deleteRegistration(index) {
+            const registration = registrations[index];
+            if (!registration) return;
+            if (!window.confirm(`Excluir a inscrição de ${registration.name} da Equipe ${registration.team}? O estudante continuará na base.`)) return;
+
+            registrations.splice(index, 1);
+            saveState();
+            renderDashboard();
+            showToast(`Inscrição de ${registration.name} excluída.`, 'success');
+        }
+
+        function renderDashboard() {
+            ['azul', 'amarelo', 'verde', 'vermelho'].forEach(color => {
+                document.getElementById(`list-${color}`).innerHTML = '';
+                document.getElementById(`count-${color}`).textContent = '0';
+                document.getElementById(`empty-${color}`).style.display = 'block';
+            });
+
+            const counts = { 'Azul': 0, 'Amarelo': 0, 'Verde': 0, 'Vermelho': 0 };
+
+            registrations.forEach((reg, index) => {
+                const teamKey = reg.team.toLowerCase();
+                const listElement = document.getElementById(`list-${teamKey}`);
+                const emptyMsg = document.getElementById(`empty-${teamKey}`);
+                
+                if (listElement) {
+                    counts[reg.team]++;
+                    emptyMsg.style.display = 'none';
+                    
+                    let modalitiesArray = Array.isArray(reg.modality) ? reg.modality : [reg.modality];
+                    const modalitiesHTML = modalitiesArray.map(mod => `
+                        <span class="inline-flex items-center gap-1 text-[10px] sm:text-xs font-semibold px-2 py-0.5 rounded bg-white text-slate-600 border border-slate-200 whitespace-nowrap">
+                            ${modalityIcons[mod]} ${mod}
+                        </span>
+                    `).join('');
+
+                    const li = document.createElement('li');
+                    li.className = 'bg-white p-2.5 rounded-lg border border-slate-100 shadow-sm flex flex-col xl:flex-row xl:justify-between xl:items-start xl:items-center gap-2 hover:border-slate-300 transition-colors';
+                    li.innerHTML = `
+                        <div class="flex flex-col">
+                            <span class="font-semibold text-slate-700 truncate" title="${reg.name}">${reg.name}</span>
+                            <span class="text-xs text-slate-500">${reg.turma} • ${reg.gender}</span>
+                        </div>
+                        <div class="flex flex-wrap gap-1 mt-1 xl:mt-0">
+                            ${modalitiesHTML}
+                        </div>
+                        <button type="button" onclick="deleteRegistration(${index})" aria-label="Excluir inscrição de ${reg.name}" class="self-start text-xs font-semibold text-red-600 hover:text-red-800 hover:bg-red-50 border border-red-200 rounded-md px-2.5 py-1.5 transition">
+                            Excluir
+                        </button>
+                    `;
+                    listElement.appendChild(li);
+                }
+            });
+
+            Object.keys(counts).forEach(team => {
+                document.getElementById(`count-${team.toLowerCase()}`).textContent = counts[team];
+            });
+        }
+
+        function resetForm() {
+            document.getElementById('student-search').value = '';
+            document.getElementById('student-turma').value = '';
+            
+            const checkedGender = document.querySelector('input[name="gender"]:checked');
+            if (checkedGender) checkedGender.checked = false;
+
+            const checkedTeam = document.querySelector('input[name="team"]:checked');
+            if (checkedTeam) checkedTeam.checked = false;
+            
+            document.querySelectorAll('input[name="modality"]').forEach(cb => cb.checked = false);
+            document.getElementById('student-search').focus();
+        }
+
+        function saveState() {
+            localStorage.setItem('jogos_students', JSON.stringify(validStudents));
+            localStorage.setItem('jogos_registrations', JSON.stringify(registrations));
+        }
+
+        function loadState() {
+            const storedStudents = localStorage.getItem('jogos_students');
+            const storedRegistrations = localStorage.getItem('jogos_registrations');
+            if (storedStudents) validStudents = JSON.parse(storedStudents);
+            if (storedRegistrations) registrations = JSON.parse(storedRegistrations);
+        }
+
+        function parseStudentBaseCSV(text) {
+            const firstLine = text.split(/\r?\n/, 1)[0] || '';
+            const delimiter = (firstLine.match(/;/g) || []).length >= (firstLine.match(/,/g) || []).length ? ';' : ',';
+            const rows = [];
+            let row = [];
+            let field = '';
+            let quoted = false;
+
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                if (char === '"') {
+                    if (quoted && text[i + 1] === '"') { field += '"'; i++; }
+                    else quoted = !quoted;
+                } else if (char === delimiter && !quoted) {
+                    row.push(field); field = '';
+                } else if ((char === '\n' || char === '\r') && !quoted) {
+                    if (char === '\r' && text[i + 1] === '\n') i++;
+                    row.push(field); rows.push(row); row = []; field = '';
+                } else {
+                    field += char;
+                }
+            }
+            if (field.length || row.length) { row.push(field); rows.push(row); }
+            return rows;
+        }
+
+        async function importStudentBaseFromCSV(event) {
+            const input = event.target;
+            const file = input.files && input.files[0];
+            if (!file) return;
+
+            try {
+                const rows = parseStudentBaseCSV((await file.text()).replace(/^\uFEFF/, ''));
+                if (rows.length < 2) throw new Error('O arquivo não contém estudantes.');
+
+                const normalizeHeader = value => value.trim().toLocaleLowerCase('pt-BR').normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                const headers = rows[0].map(normalizeHeader);
+                const nameIndex = headers.indexOf('nome');
+                const classIndex = headers.indexOf('turma');
+                if (nameIndex < 0 || classIndex < 0) throw new Error('O CSV precisa ter as colunas Nome e Turma.');
+
+                const importedStudents = rows.slice(1)
+                    .map(row => ({ name: (row[nameIndex] || '').trim(), turma: (row[classIndex] || '').trim() }))
+                    .filter(student => student.name && student.turma);
+                if (importedStudents.length === 0) throw new Error('Não encontrei linhas com Nome e Turma preenchidos.');
+
+                let added = 0;
+                let updated = 0;
+                importedStudents.forEach(imported => {
+                    const existing = validStudents.find(student => student.name.trim().toLocaleLowerCase('pt-BR') === imported.name.toLocaleLowerCase('pt-BR'));
+                    if (existing) {
+                        if (existing.turma.trim() !== imported.turma) { existing.turma = imported.turma; updated++; }
+                    } else {
+                        validStudents.push(imported);
+                        added++;
+                    }
+                });
+
+                saveState();
+                updateDatalist();
+                showToast(`Importação concluída: ${added} adicionados e ${updated} turmas atualizadas.`, 'success');
+            } catch (error) {
+                showToast(error.message || 'Não foi possível carregar esse arquivo CSV.', 'error');
+            } finally {
+                input.value = '';
+            }
+        }
+        function exportStudentBaseToCSV() {
+            if (validStudents.length === 0) {
+                showToast('A base de estudantes está vazia.', 'error');
+                return;
+            }
+
+            const escapeCSV = value => `"${String(value).replace(/"/g, '""')}"`;
+            const rows = [...validStudents]
+                .sort((a, b) => a.turma.localeCompare(b.turma, 'pt-BR', { sensitivity: 'base' }) || a.name.localeCompare(b.name, 'pt-BR', { sensitivity: 'base' }))
+                .map(student => `${escapeCSV(student.name)};${escapeCSV(student.turma)}`);
+            const csvContent = '\uFEFFNome;Turma\n' + rows.join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'base_estudantes_jogos_escolares.csv';
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            URL.revokeObjectURL(url);
+            showToast('Base de estudantes exportada com sucesso!', 'success');
+        }
+        function exportToCSV() {
+            if (registrations.length === 0) { showToast('Não há inscrições para exportar.', 'error'); return; }
+
+            const separator = ';';
+            let csvContent = `Nome${separator}Turma${separator}Gênero${separator}Equipe${separator}Modalidades\n`;
+
+            registrations.forEach(reg => {
+                const escapeCSV = (str) => `"${String(str).replace(/"/g, '""')}"`;
+                const name = escapeCSV(reg.name);
+                const turma = escapeCSV(reg.turma);
+                const gender = escapeCSV(reg.gender);
+                const team = escapeCSV(reg.team);
+                const modalitiesArray = Array.isArray(reg.modality) ? reg.modality : [reg.modality];
+                const modalities = escapeCSV(modalitiesArray.join(', ')); 
+                
+                csvContent += `${name}${separator}${turma}${separator}${gender}${separator}${team}${separator}${modalities}\n`;
+            });
+
+            const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", "inscricoes_jogos_integrados.csv");
+            link.style.visibility = 'hidden';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showToast('Arquivo CSV baixado com sucesso!', 'success');
+        }
+
+        function exportBoard() {
+            if (registrations.length === 0) {
+                showToast('Não há inscrições para exportar.', 'error');
+                return;
+            }
+
+            // Agrupamento dos dados: Equipe > Modalidade > Gênero
+            const printData = {};
+            const teams = ['Azul', 'Amarelo', 'Verde', 'Vermelho'];
+            const modalities = ['Dodboll', 'Futsal', 'Peteca', 'Jogos e Brincadeiras', 'Natação', 'Voleibol', 'Tenis de mesa', 'Totó', 'Xadrez', 'Jogos Eletrônicos', 'Oficina de Artes', 'Cubo mágico', 'Batalha Sumo Robótico', 'Torta na Cara', 'Uno', 'Soletrando', 'Quizz', 'Futebol', 'Queimada', 'Vôlei', 'Robótica'];
+            const genders = ['Feminino', 'Masculino']; // Ordem exigida
+
+            registrations.forEach(reg => {
+                if (!printData[reg.team]) printData[reg.team] = {};
+                
+                // Se o aluno escolheu mais de uma modalidade, adicionamos em todas
+                let modalitiesArray = Array.isArray(reg.modality) ? reg.modality : [reg.modality];
+                
+                modalitiesArray.forEach(mod => {
+                    if (!printData[reg.team][mod]) printData[reg.team][mod] = { 'Feminino': [], 'Masculino': [] };
+                    printData[reg.team][mod][reg.gender].push({ name: reg.name, turma: reg.turma });
+                });
+            });
+
+            // Geração do HTML para Impressão
+            let html = `
+                <!DOCTYPE html>
+                <html lang="pt-BR">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Quadro de Inscrições - Impressão</title>
+                    <style>
+                        body { 
+                            font-family: Arial, sans-serif; 
+                            padding: 20px; 
+                            background-color: white;
+                            color: black;
+                        }
+                        h2 { text-align: center; font-size: 22px; margin-top: 40px; margin-bottom: 15px; }
+                        h3 { text-align: center; font-size: 18px; margin-top: 25px; margin-bottom: 5px; }
+                        hr { border: 0; border-bottom: 1px solid black; margin-bottom: 25px; }
+                        h4 { text-align: center; font-size: 16px; margin-top: 20px; margin-bottom: 5px; }
+                        table { 
+                            width: 100%; 
+                            border-collapse: collapse; 
+                            margin-bottom: 40px; 
+                            page-break-inside: avoid;
+                        }
+                        th, td { 
+                            border: 1px solid black; 
+                            padding: 4px 8px; 
+                        }
+                        th { 
+                            background-color: #E6D0E6 !important; /* Roxo claro solicitado */
+                            -webkit-print-color-adjust: exact; 
+                            print-color-adjust: exact;
+                            text-align: center; 
+                            font-weight: bold; 
+                        }
+                        td { 
+                            text-transform: uppercase; 
+                            text-align: left; 
+                            font-size: 14px;
+                        }
+                        .team-block { page-break-after: always; }
+                        .team-block:last-child { page-break-after: auto; }
+                        @media print {
+                            body { padding: 0; }
+                            @page { margin: 1.5cm; }
+                        }
+                    </style>
+                </head>
+                <body>
+            `;
+
+            let hasDataToPrint = false;
+
+            teams.forEach(team => {
+                if (printData[team]) {
+                    hasDataToPrint = true;
+                    html += `<div class="team-block">`;
+                    html += `<h2>Equipe ${team}</h2>`;
+                    
+                    modalities.forEach(mod => {
+                        if (printData[team][mod]) {
+                            html += `<h3>${mod}</h3>`;
+                            html += `<hr>`;
+                            
+                            genders.forEach(gen => {
+                                const students = printData[team][mod][gen];
+                                if (students && students.length > 0) {
+                                    html += `<h4>${gen}</h4>`;
+                                    html += `
+                                        <table>
+                                            <thead>
+                                                <tr>
+                                                    <th>Nome</th>
+                                                    <th>Turma</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                    `;
+                                    students.forEach(student => {
+                                        html += `
+                                                <tr>
+                                                    <td>${student.name}</td>
+                                                    <td>${student.turma}</td>
+                                                </tr>
+                                        `;
+                                    });
+                                    html += `
+                                            </tbody>
+                                        </table>
+                                    `;
+                                }
+                            });
+                        }
+                    });
+                    html += `</div>`;
+                }
+            });
+
+            if (!hasDataToPrint) {
+                showToast('Não há dados de inscrições suficientes para gerar o quadro.', 'error');
+                return;
+            }
+
+            html += `
+                <script>
+                    window.onload = function() {
+                        setTimeout(() => {
+                            window.print();
+                        }, 500);
+                    }
+                <\/script>
+                
+</body>
+                </html>
+            `;
+
+            const printWindow = window.open('', '_blank');
+            if (printWindow) {
+                printWindow.document.open();
+                printWindow.document.write(html);
+                printWindow.document.close();
+            } else {
+                showToast('O bloqueador de pop-ups do seu navegador impediu a exportação. Por favor, permita pop-ups para este site.', 'error');
+            }
+        }
+    </script>
+
+    <script>if ("serviceWorker" in navigator) { window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(() => {})); }</script>
+</body>
+</html>
