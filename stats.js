@@ -1,7 +1,7 @@
 function collectTeamResults() {
     const teams = ['Azul', 'Amarelo', 'Verde', 'Vermelho'];
     const modalities = ['Dodboll', 'Futsal', 'Peteca', 'Jogos e Brincadeiras', 'Natação', 'Voleibol', 'Tenis de mesa', 'Totó', 'Xadrez', 'Jogos Eletrônicos', 'Oficina de Artes', 'Cubo mágico', 'Batalha Sumo Robótico', 'Torta na Cara', 'Uno', 'Soletrando', 'Quizz'];
-    const standings = Object.fromEntries(teams.map(team => [team, {team, points:0, scoreFor:0, played:0, wins:0, draws:0, losses:0}]));
+    const standings = Object.fromEntries(teams.map(team => [team, {team, points:0, matchPoints:0, simultaneousPoints:0, scoreFor:0, played:0, wins:0, draws:0, losses:0}]));
     const pointsByGenderModality = {};
     const completedMatches = gameFixtures.filter(match => {
         const score = gameScores[match.id];
@@ -30,12 +30,13 @@ function collectTeamResults() {
         resultB.scoreFor += b; resultB.scoreAgainst = (resultB.scoreAgainst || 0) + a;
         let pointsA = 0, pointsB = 0;
         if (a > b) {
-            pointsA = 3; resultA.points += 3; resultA.wins++; resultB.losses++;
+            pointsA = 3; resultA.points += 3; resultA.matchPoints += 3; resultA.wins++; resultB.losses++;
         } else if (b > a) {
-            pointsB = 3; resultB.points += 3; resultB.wins++; resultA.losses++;
+            pointsB = 3; resultB.points += 3; resultB.matchPoints += 3; resultB.wins++; resultA.losses++;
         } else {
             pointsA = 1; pointsB = 1;
             resultA.points++; resultB.points++;
+            resultA.matchPoints++; resultB.matchPoints++;
             resultA.draws++; resultB.draws++;
         }
         const gender = match.category.includes('Masculino') ? 'Masculino' : match.category.includes('Feminino') ? 'Feminino' : '';
@@ -43,12 +44,22 @@ function collectTeamResults() {
         addModalityPoints(gender, match.sport, teamB, pointsB);
     });
 
+    Object.values(simultaneousResults || {}).forEach(places => {
+        [1,2,3,4].forEach(position => {
+            const team = places?.[position];
+            if (!standings[team]) return;
+            const points = [150,130,110,90][position-1];
+            standings[team].points += points;
+            standings[team].simultaneousPoints += points;
+        });
+    });
+
     const ranked = Object.values(standings).sort((a,b) => b.points - a.points || b.scoreFor - a.scoreFor || teams.indexOf(a.team) - teams.indexOf(b.team));
     let position = 0;
     ranked.forEach((team,index) => {
         const previous = ranked[index - 1];
         if (!previous || team.points !== previous.points || team.scoreFor !== previous.scoreFor) position = index + 1;
-        team.position = team.played ? position : null;
+        team.position = team.played || team.simultaneousPoints ? position : null;
     });
     return {teams, modalities, standings, ranked, pointsByGenderModality, completedMatches};
 }
@@ -66,7 +77,7 @@ function renderStatistics() {
     const maxModality = Math.max(0, ...modalityTotals);
     const teamIndex = teamCounts.indexOf(maxTeam);
     const modalityIndex = modalityTotals.indexOf(maxModality);
-    const leader = ranked.find(team => team.played);
+    const leader = ranked.find(team => team.played || team.simultaneousPoints);
     document.getElementById('stats-summary').innerHTML = [
         ['Estudantes inscritos', String(registrations.length)],
         ['Equipe com mais inscritos', registrations.length ? `Equipe ${teams[teamIndex]} · ${maxTeam}` : 'Sem inscrições'],
@@ -81,20 +92,32 @@ function renderStatistics() {
         const color = colors[team];
         return `<div class="rounded-lg border border-slate-200 bg-slate-50 p-3 flex items-center justify-between gap-2">
             <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full" style="background:${color}"></span><span class="font-semibold text-slate-700">Equipe ${team}</span></div>
-            <div class="text-right"><div class="font-bold text-indigo-700">${result.points} pts</div><div class="text-xs text-slate-500">${result.scoreFor} no placar</div></div>
+            <div class="text-right"><div class="font-bold text-indigo-700">${result.points} pts finais</div><div class="text-xs text-slate-500">Tabela ${result.matchPoints} + Simultâneos ${result.simultaneousPoints}</div><div class="text-xs text-slate-500">${result.scoreFor} no placar</div></div>
         </div>`;
     }).join('');
     const body = document.getElementById('stats-standings-body');
     const empty = document.getElementById('stats-standings-empty');
-    empty.classList.toggle('hidden', ranked.some(team => team.played));
+    empty.classList.toggle('hidden', ranked.some(team => team.played || team.simultaneousPoints));
     body.innerHTML = ranked.map(team => `<tr>
         <td class="px-3 py-2 font-semibold">${team.position ?? '—'}</td>
         <td class="px-3 py-2 font-semibold">Equipe ${team.team}</td>
         <td class="px-3 py-2 font-bold text-indigo-700">${team.points}</td>
+        <td class="px-3 py-2">${team.matchPoints}</td><td class="px-3 py-2">${team.simultaneousPoints}</td>
         <td class="px-3 py-2">${team.played}</td><td class="px-3 py-2">${team.wins}</td>
         <td class="px-3 py-2">${team.draws}</td><td class="px-3 py-2">${team.losses}</td>
         <td class="px-3 py-2">${team.scoreFor}</td>
     </tr>`).join('');
+
+    const simultaneousBody = document.getElementById('stats-simultaneous-body');
+    simultaneousBody.innerHTML = simultaneousModalities.map(modality => {
+        const places = simultaneousResults[modality] || {};
+        const cells = teams.map(team => {
+            const position = [1,2,3,4].find(place => places[place] === team);
+            const points = position ? [150,130,110,90][position-1] : '—';
+            return `<td class="px-3 py-2 ${position ? 'font-semibold text-emerald-600' : 'text-slate-400'}">${points}</td>`;
+        }).join('');
+        return `<tr><td class="px-3 py-2 font-medium">${modality}</td>${cells}</tr>`;
+    }).join('');
 
     drawHorizontalBarChart('stats-team-total', teams.map(team => `Equipe ${team}`), [
         {label:'Inscritos', values:teamCounts, itemColors:teams.map(team => colors[team])}

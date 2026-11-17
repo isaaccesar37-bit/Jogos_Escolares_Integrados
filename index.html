@@ -38,6 +38,7 @@
         .border-indigo-600, .border-indigo-500 { border-color: #10b981 !important; }
         .bg-indigo-50 { background-color: #102b2b !important; }
         .border-indigo-100, .border-indigo-200 { border-color: #1d514c !important; }
+        .text-emerald-600 { color: #34d399 !important; }
         input:not([type="radio"]):not([type="checkbox"]), select, textarea { background-color: #0a1020 !important; color: #e2e8f0 !important; border-color: #334155 !important; }
         input::placeholder, textarea::placeholder { color: #8293aa !important; }
         input:focus, select:focus, textarea:focus { border-color: #10b981 !important; --tw-ring-color: #10b981 !important; }
@@ -84,6 +85,7 @@
         body.theme-light .border-slate-100, body.theme-light .border-slate-200, body.theme-light .border-slate-300 { border-color:#cbd5e1 !important; }
         body.theme-light .divide-slate-100 > :not([hidden]) ~ :not([hidden]) { border-color:#e2e8f0 !important; }
         body.theme-light .text-indigo-700, body.theme-light .text-indigo-600, body.theme-light .text-indigo-500 { color:#047857 !important; }
+        body.theme-light .text-emerald-600 { color:#047857 !important; }
         body.theme-light .border-indigo-600, body.theme-light .border-indigo-500 { border-color:#059669 !important; }
         body.theme-light .bg-indigo-50 { background-color:#ecfdf5 !important; }
         body.theme-light .border-indigo-100, body.theme-light .border-indigo-200 { border-color:#a7f3d0 !important; }
@@ -173,7 +175,8 @@
     <main class="max-w-7xl mx-auto px-4 pb-12">
         <div role="tablist" aria-label="Seções do app" class="flex gap-2 overflow-x-auto border-b border-slate-200 mb-6">
             <button id="tab-inscricao" type="button" role="tab" aria-selected="true" aria-controls="pane-inscricao" onclick="switchTab('inscricao')" class="tab-button whitespace-nowrap px-5 py-3 font-semibold text-sm border-b-2 border-indigo-600 text-indigo-700">Inscrição</button>
-            <button id="tab-jogos" type="button" role="tab" aria-selected="false" aria-controls="pane-jogos" onclick="switchTab('jogos')" class="tab-button whitespace-nowrap px-5 py-3 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-indigo-700">Jogos</button>
+            <button id="tab-jogos" type="button" role="tab" aria-selected="false" aria-controls="pane-jogos" onclick="switchTab('jogos')" class="tab-button whitespace-nowrap px-5 py-3 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-indigo-700">Jogos Tabela</button>
+            <button id="tab-jogos-simultaneos" type="button" role="tab" aria-selected="false" aria-controls="pane-jogos-simultaneos" onclick="switchTab('jogos-simultaneos')" class="tab-button whitespace-nowrap px-5 py-3 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-indigo-700">Jogos Simultâneos</button>
             <button id="tab-estatisticas" type="button" role="tab" aria-selected="false" aria-controls="pane-estatisticas" onclick="switchTab('estatisticas')" class="tab-button whitespace-nowrap px-5 py-3 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-indigo-700">Estatísticas</button>
             <button id="tab-dados" type="button" role="tab" aria-selected="false" aria-controls="pane-dados" onclick="switchTab('dados')" class="tab-button whitespace-nowrap px-5 py-3 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-indigo-700">Dados</button>
         </div>
@@ -425,24 +428,41 @@
                 </div>
             </section>
                     </section>
-                <section id="pane-estatisticas" role="tabpanel" aria-labelledby="tab-estatisticas" class="hidden space-y-6">
+        <section id="pane-jogos-simultaneos" role="tabpanel" aria-labelledby="tab-jogos-simultaneos" class="hidden space-y-6">
+            <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+                <h2 class="text-xl font-bold text-slate-800">Jogos Simultâneos</h2>
+                <p class="text-sm text-slate-500 mt-1">Classifique manualmente as equipes nas modalidades sem confrontos de uma equipe contra outra. Cada posição vale: 1º = 150 pontos, 2º = 130, 3º = 110 e 4º = 90.</p>
+                <h3 class="text-sm font-bold text-slate-700 mt-5 mb-2">Pontuação acumulada</h3>
+                <div id="simultaneous-team-totals" class="grid grid-cols-2 lg:grid-cols-4 gap-3"></div>
+            </section>
+            <section id="simultaneous-modalities" class="grid grid-cols-1 xl:grid-cols-2 gap-4"></section>
+        </section>
+        <section id="pane-estatisticas" role="tabpanel" aria-labelledby="tab-estatisticas" class="hidden space-y-6">
             <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
                 <h2 class="text-xl font-bold text-slate-800">Estatísticas das equipes</h2>
                 <p class="text-sm text-slate-500 mt-1">Inscrições por equipe, gênero e modalidade. Cada estudante pode aparecer em várias modalidades.</p>
-                                <div id="stats-summary" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-3 mt-5"></div>                <div class="mt-5"><h3 class="text-sm font-bold text-slate-700 mb-2">Pontuação atual das equipes</h3><div id="stats-points-preview" class="grid grid-cols-2 lg:grid-cols-4 gap-3"></div></div>                <div class="flex flex-wrap gap-2 mt-4"><button type="button" onclick="loadDemoData()" class="rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 text-sm font-semibold">Recarregar demonstração (556 inscritos)</button><button type="button" onclick="removeDemoData()" class="rounded-lg bg-white hover:bg-red-50 text-red-700 border border-red-200 px-4 py-2 text-sm font-semibold">Remover dados de demonstração</button></div><p class="text-xs text-slate-500 mt-2">Carrega 556 inscrições fictícias com modalidades e gêneros variados e placares simulados em todos os jogos. Os dados reais são restaurados ao remover a demonstração.</p>
+                <div id="stats-summary" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-3 mt-5"></div>                <div class="mt-5"><h3 class="text-sm font-bold text-slate-700 mb-2">Pontuação atual das equipes</h3><div id="stats-points-preview" class="grid grid-cols-2 lg:grid-cols-4 gap-3"></div></div>                <div class="flex flex-wrap gap-2 mt-4"><button type="button" onclick="loadDemoData()" class="rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 text-sm font-semibold">Recarregar demonstração (556 inscritos)</button><button type="button" onclick="removeDemoData()" class="rounded-lg bg-white hover:bg-red-50 text-red-700 border border-red-200 px-4 py-2 text-sm font-semibold">Remover dados de demonstração</button></div><p class="text-xs text-slate-500 mt-2">Carrega 556 inscrições fictícias, placares em todos os jogos e classificações demonstrativas simultâneas. Os dados reais são restaurados ao remover a demonstração.</p>
             </section>
             <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
                 <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2 mb-4">
                     <div><h3 class="text-lg font-bold text-slate-800">Classificação das equipes</h3>
-                    <p class="text-xs text-slate-500 mt-1">Vitória: 3 · Empate: 1 · Derrota: 0. Em empate na classificação, vence quem marcou mais pontos nos placares.</p></div>
+                    <p class="text-xs text-slate-500 mt-1">Pontuação final = Jogos Tabela (vitória 3, empate 1, derrota 0) + Jogos Simultâneos (150, 130, 110 ou 90 por colocação). Em empate, vence quem marcou mais pontos nos placares.</p></div>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm text-left">
-                        <thead class="text-xs uppercase text-slate-500 bg-slate-50"><tr><th class="px-3 py-2">Pos.</th><th class="px-3 py-2">Equipe</th><th class="px-3 py-2">Pts</th><th class="px-3 py-2">PJ</th><th class="px-3 py-2">V</th><th class="px-3 py-2">E</th><th class="px-3 py-2">D</th><th class="px-3 py-2">Placar a favor</th></tr></thead>
+                        <thead class="text-xs uppercase text-slate-500 bg-slate-50"><tr><th class="px-3 py-2">Pos.</th><th class="px-3 py-2">Equipe</th><th class="px-3 py-2">Pts finais</th><th class="px-3 py-2">Jogos Tabela</th><th class="px-3 py-2">Jogos Simultâneos</th><th class="px-3 py-2">PJ</th><th class="px-3 py-2">V</th><th class="px-3 py-2">E</th><th class="px-3 py-2">D</th><th class="px-3 py-2">Placar a favor</th></tr></thead>
                         <tbody id="stats-standings-body" class="divide-y divide-slate-100"></tbody>
                     </table>
                 </div>
-                <p id="stats-standings-empty" class="hidden text-sm text-slate-500 text-center py-4">Preencha os placares para formar a classificação.</p>
+                <p id="stats-standings-empty" class="hidden text-sm text-slate-500 text-center py-4">Insira placares ou classificações simultâneas para formar a classificação final.</p>
+            </section>
+            <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+                <h3 class="text-lg font-bold text-slate-800">Pontuação dos Jogos Simultâneos por modalidade</h3>
+                <p class="text-xs text-slate-500 mt-1">Os pontos de cada colocação são somados ao total final de cada equipe.</p>
+                <div class="overflow-x-auto mt-3"><table class="w-full text-sm text-left">
+                    <thead class="text-xs uppercase text-slate-500 bg-slate-50"><tr><th class="px-3 py-2">Modalidade</th><th class="px-3 py-2">Azul</th><th class="px-3 py-2">Amarelo</th><th class="px-3 py-2">Verde</th><th class="px-3 py-2">Vermelho</th></tr></thead>
+                    <tbody id="stats-simultaneous-body" class="divide-y divide-slate-100"></tbody>
+                </table></div>
             </section>
             <section class="grid grid-cols-1 xl:grid-cols-2 gap-6">
                 <article class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
@@ -2645,6 +2665,10 @@
         let gameScores = {};
         let gameParticipants = {};
         let gameFixtureEdits = {};
+        let simultaneousResults = {};
+        const simultaneousModalities = ['Jogos e Brincadeiras','Natação','Xadrez','Jogos Eletrônicos','Oficina de Artes','Cubo mágico','Batalha Sumo Robótico','Torta na Cara','Uno','Soletrando','Quizz'];
+        const simultaneousPoints = [150,130,110,90];
+        const schoolTeams = ['Azul','Amarelo','Verde','Vermelho'];
 
 
         const modalityIcons = {
@@ -2717,10 +2741,12 @@
             loadGameScores();
             loadGameParticipants();
             loadGameFixtureEdits();
+            loadSimultaneousResults();
             updateDatalist();
             renderDashboard();
             renderGameFixtures();
-            if (localStorage.getItem('jogos_demo_seed_v2') !== 'loaded') loadDemoData();
+            renderSimultaneousGames();
+            if (localStorage.getItem('jogos_demo_seed_v3') !== 'loaded') loadDemoData();
         };
 
         function loadDemoData() {
@@ -2776,6 +2802,9 @@
             if (!localStorage.getItem('jogos_demo_participants_backup')) {
                 localStorage.setItem('jogos_demo_participants_backup',JSON.stringify(gameParticipants));
             }
+            if (!localStorage.getItem('jogos_demo_simultaneous_backup')) {
+                localStorage.setItem('jogos_demo_simultaneous_backup',JSON.stringify(simultaneousResults));
+            }
 
             gameScores = {};
             gameParticipants = {};
@@ -2789,17 +2818,24 @@
                 if (match.phase === 'Final' && Math.random() < 0.30) b = a;
                 gameScores[match.id] = {a,b};
             });
+            simultaneousResults = {};
+            simultaneousModalities.forEach(modality => {
+                const ranking = shuffle(teams);
+                simultaneousResults[modality] = Object.fromEntries(ranking.map((team,index) => [index+1,team]));
+            });
 
             localStorage.setItem('jogos_game_scores',JSON.stringify(gameScores));
             localStorage.setItem('jogos_game_participants',JSON.stringify(gameParticipants));
+            localStorage.setItem('jogos_simultaneous_results',JSON.stringify(simultaneousResults));
             localStorage.setItem('jogos_demo_score_ids',JSON.stringify(gameFixtures.map(match => match.id)));
-            localStorage.setItem('jogos_demo_seed_v2','loaded');
+            localStorage.setItem('jogos_demo_seed_v3','loaded');
             saveState();
             updateDatalist();
             renderDashboard();
             renderGameFixtures();
+            renderSimultaneousGames();
             renderStatistics();
-            showToast('556 inscrições demonstrativas e placares preenchidos em todos os jogos.','success');
+            showToast('Demonstração atualizada com classificação dos jogos simultâneos.','success');
         }
 
         function removeDemoData() {
@@ -2822,11 +2858,18 @@
                 try { gameParticipants = JSON.parse(savedParticipants); } catch { gameParticipants = {}; }
                 localStorage.removeItem('jogos_demo_participants_backup');
             }
+            const savedSimultaneous = localStorage.getItem('jogos_demo_simultaneous_backup');
+            if (savedSimultaneous !== null) {
+                try { simultaneousResults = JSON.parse(savedSimultaneous); } catch { simultaneousResults = {}; }
+                localStorage.removeItem('jogos_demo_simultaneous_backup');
+            }
             localStorage.removeItem('jogos_demo_score_ids');
             localStorage.setItem('jogos_game_scores',JSON.stringify(gameScores));
             localStorage.setItem('jogos_game_participants',JSON.stringify(gameParticipants));
+            localStorage.setItem('jogos_simultaneous_results',JSON.stringify(simultaneousResults));
             renderDashboard();
             renderGameFixtures();
+            renderSimultaneousGames();
             renderStatistics();
             showToast('Dados de demonstração removidos e dados anteriores restaurados.','success');
         }
@@ -2845,6 +2888,44 @@
             gameFixtures.forEach(match => {
                 if (gameFixtureEdits[match.id]) Object.assign(match,gameFixtureEdits[match.id]);
             });
+        }
+        function loadSimultaneousResults() {
+            try { simultaneousResults = JSON.parse(localStorage.getItem('jogos_simultaneous_results') || '{}'); }
+            catch { simultaneousResults = {}; }
+        }
+        function renderSimultaneousGames() {
+            const totals = Object.fromEntries(schoolTeams.map(team => [team,0]));
+            Object.values(simultaneousResults).forEach(places => {
+                [1,2,3,4].forEach(position => {
+                    const team = places?.[position];
+                    if (totals[team] !== undefined) totals[team] += simultaneousPoints[position-1];
+                });
+            });
+            document.getElementById('simultaneous-team-totals').innerHTML = schoolTeams.map(team =>
+                `<div class="rounded-lg border border-slate-200 bg-slate-50 p-3 flex justify-between items-center"><span class="font-semibold text-slate-700">Equipe ${team}</span><strong class="text-emerald-600">${totals[team]} pts</strong></div>`
+            ).join('');
+            document.getElementById('simultaneous-modalities').innerHTML = simultaneousModalities.map((modality,index) => {
+                const saved = simultaneousResults[modality] || {};
+                const rows = [1,2,3,4].map(position => `<label class="grid grid-cols-[3.2rem_1fr_5rem] items-center gap-2 text-sm"><span class="font-bold text-slate-700">${position}º</span><select id="simultaneous-${index}-${position}" class="min-w-0 p-2 border border-slate-300 rounded-lg bg-white"><option value="">Selecione a equipe</option>${schoolTeams.map(team => `<option value="${team}" ${saved[position] === team ? 'selected' : ''}>Equipe ${team}</option>`).join('')}</select><span class="text-right text-emerald-600 font-semibold">${simultaneousPoints[position-1]} pts</span></label>`).join('');
+                const isSaved = [1,2,3,4].every(position => schoolTeams.includes(saved[position]));
+                return `<article class="bg-white rounded-xl shadow-sm border border-slate-200 p-5"><div class="flex flex-wrap justify-between items-center gap-2 mb-4"><h3 class="font-bold text-slate-800">${escapeGameText(modality)}</h3><span class="text-xs ${isSaved ? 'text-emerald-600' : 'text-slate-500'}">${isSaved ? 'Classificação salva' : 'Aguardando classificação'}</span></div><div class="space-y-2">${rows}</div><button type="button" onclick="saveSimultaneousRanking(${index})" class="mt-4 w-full rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white py-2 font-semibold text-sm">Salvar classificação</button></article>`;
+            }).join('');
+        }
+        function saveSimultaneousRanking(modalityIndex) {
+            const modality = simultaneousModalities[modalityIndex];
+            const teamsByPosition = [1,2,3,4].map(position => document.getElementById(`simultaneous-${modalityIndex}-${position}`).value);
+            if (teamsByPosition.every(team => !team)) {
+                delete simultaneousResults[modality];
+            } else if (teamsByPosition.some(team => !team) || new Set(teamsByPosition).size !== 4) {
+                showToast('Informe uma equipe diferente para cada colocação, do 1º ao 4º.','error');
+                return;
+            } else {
+                simultaneousResults[modality] = Object.fromEntries(teamsByPosition.map((team,index) => [index+1,team]));
+            }
+            localStorage.setItem('jogos_simultaneous_results',JSON.stringify(simultaneousResults));
+            renderSimultaneousGames();
+            if (!document.getElementById('pane-estatisticas').classList.contains('hidden')) renderStatistics();
+            showToast(`Classificação de ${modality} salva.`,`success`);
         }
         function escapeGameText(value) {
             return String(value).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
@@ -3009,7 +3090,7 @@
             if (!document.getElementById('pane-estatisticas').classList.contains('hidden')) renderStatistics();
         }
         function switchTab(tabName) {
-            ['inscricao', 'jogos', 'estatisticas', 'dados'].forEach(name => {
+            ['inscricao', 'jogos', 'jogos-simultaneos', 'estatisticas', 'dados'].forEach(name => {
                 const active = name === tabName;
                 document.getElementById(`pane-${name}`).classList.toggle('hidden', !active);
                 const tab = document.getElementById(`tab-${name}`);
@@ -3020,6 +3101,7 @@
                 tab.classList.toggle('text-slate-500', !active);
             });
             if (tabName === 'jogos') renderGameFixtures();
+            if (tabName === 'jogos-simultaneos') renderSimultaneousGames();
             if (tabName === 'estatisticas') renderStatistics();
         }
         function showToast(message, type = 'info') {
