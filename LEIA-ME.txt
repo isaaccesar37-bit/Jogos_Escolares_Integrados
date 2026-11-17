@@ -1,0 +1,9 @@
+JOGOS ESCOLARES INTEGRADOS — APP LOCAL
+
+COMO ABRIR
+1. Extraia a pasta jogos-escolares-app do arquivo ZIP.
+2. Abra index.html com um navegador atualizado.
+
+O app salva a base de estudantes e as inscrições no armazenamento local do navegador e do dispositivo onde foi aberto. Para mover os dados para outro navegador ou computador, use os botões CSV de exportação e carregamento.
+
+A interface usa Tailwind CSS e a fonte Inter carregados de serviços online. Por isso, conecte-se à internet ao abrir o app para carregar a apresentação visual. O cadastro e os dados permanecem locais; não há sincronização entre dispositivos.
