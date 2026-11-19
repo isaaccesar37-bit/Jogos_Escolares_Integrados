@@ -60,6 +60,9 @@
         textarea::-webkit-scrollbar-thumb:hover { background: #475569; }
         ::selection { color: #ecfdf5; background: #059669; }
 
+        .registration-form-summary::-webkit-details-marker { display:none; }
+        #registration-form-details[open] > .registration-form-summary { border-bottom:1px solid #29364b; }
+        body.theme-light #registration-form-details[open] > .registration-form-summary { border-bottom-color:#cbd5e1; }
         .header-layout { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,2fr) minmax(0,1fr); align-items:center; gap:1rem; }
         .header-title { text-align:center; }
         .header-title h1 { justify-content:center; }
@@ -185,7 +188,18 @@
         </div>
     </div>
 
-    <header class="bg-indigo-600 text-white shadow-md py-6 mb-8">
+    <div id="registration-edit-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 backdrop-blur-sm px-3 py-4">
+        <div class="w-full max-w-2xl max-h-[92vh] overflow-y-auto rounded-2xl border border-slate-300 bg-white p-5 shadow-2xl sm:p-6">
+            <div class="mb-5"><h2 class="text-xl font-bold text-slate-800">Editar inscrição</h2><p class="mt-1 text-sm text-slate-500">Ajuste os dados e confirme a presença por modalidade.</p></div>
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <label class="text-sm font-semibold text-slate-700 sm:col-span-2">Nome do estudante<input id="edit-registration-name" type="text" class="mt-1 block w-full rounded-lg border border-slate-300 p-2.5 text-sm"></label>
+                <label class="text-sm font-semibold text-slate-700">Turma<input id="edit-registration-class" type="text" class="mt-1 block w-full rounded-lg border border-slate-300 p-2.5 text-sm"></label>
+                <label class="text-sm font-semibold text-slate-700">Sexo<select id="edit-registration-gender" class="mt-1 block w-full rounded-lg border border-slate-300 p-2.5 text-sm"></select></label>
+            </div>
+            <div class="mt-5"><h3 class="text-sm font-bold text-slate-800">Modalidades e presença</h3><div id="edit-registration-modalities" class="mt-2 max-h-72 space-y-2 overflow-y-auto rounded-xl border border-slate-200 p-3"></div></div>
+            <div class="mt-5 flex flex-wrap justify-end gap-2"><button type="button" onclick="closeRegistrationEdit()" class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-600">Cancelar</button><button type="button" onclick="saveRegistrationEdit()" class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white">Salvar alterações</button></div>
+        </div>
+    </div>    <header class="bg-indigo-600 text-white shadow-md py-6 mb-8">
         <div class="header-layout max-w-7xl mx-auto px-4">
             <img class="header-logo" src="logo.png" alt="Logo branca IX JIBG — Jogos Integrados SESI Benjamin Guimarães">
             <div class="header-title">
@@ -209,11 +223,13 @@
             <button id="tab-dados" type="button" role="tab" aria-selected="false" aria-controls="pane-dados" onclick="switchTab('dados')" class="tab-button whitespace-nowrap px-5 py-3 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-indigo-700">Dados</button>
         </div>
         <section id="pane-inscricao" role="tabpanel" aria-labelledby="tab-inscricao" class="max-w-2xl mx-auto">
-            <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
-                <h2 class="text-lg font-semibold text-slate-800 mb-5 flex items-center gap-2">
+            <details id="registration-form-details" class="group overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+                <summary class="registration-form-summary flex cursor-pointer list-none items-center gap-2 px-5 py-4 text-lg font-semibold text-slate-800 select-none">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-500"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                    Inscrição
-                </h2>
+                    <span>Inscrição</span>
+                    <span class="ml-auto text-xl text-slate-500 transition-transform group-open:rotate-180" aria-hidden="true">⌄</span>
+                </summary>
+                <div class="border-t border-slate-200 p-5">
                 
                 <!-- Busca de Estudante -->
                 <div class="mb-4">
@@ -352,7 +368,8 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
                     Inscrever Estudante
                 </button>
-            </section>
+            </div>
+            </details>
 
             <div class="mt-6">
 <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 h-full flex flex-col">
@@ -369,10 +386,6 @@
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
                             Exportar Quadro
                         </button>
-                        <button onclick="exportToCSV()" class="flex-1 md:flex-none flex items-center justify-center gap-2 text-sm bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors shadow-sm font-semibold">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                            Exportar (CSV)
-                        </button>
                         <button onclick="openModal()" class="flex-1 md:flex-none flex items-center justify-center gap-2 text-sm bg-white border border-red-200 text-red-600 hover:bg-red-50 px-4 py-2 rounded-lg transition-colors font-medium">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                             Limpar
@@ -380,15 +393,21 @@
                     </div>
                 </div>
 
+                <div class="mb-4">
+                    <label for="registration-search" class="block text-sm font-semibold text-slate-700 mb-1">Buscar nos inscritos</label>
+                    <input id="registration-search" type="search" oninput="renderDashboard()" class="w-full p-3 border border-slate-300 rounded-lg" placeholder="Nome, turma ou modalidade...">
+                <p class="text-xs text-slate-500 mt-1">Em cada modalidade do aluno, marque Presente ou Ausente.</p>
+                </div>
+                <input id="team-registration-file" type="file" accept=".json,application/json" class="hidden" onchange="importTeamRegistrations(event)">
                 <div class="grid grid-cols-1 xl:grid-cols-2 gap-5 flex-grow">
                     
                     <!-- Equipe Azul -->
                     <div class="border border-blue-200 rounded-xl overflow-hidden flex flex-col bg-blue-50/30">
                         <div class="bg-blue-600 text-white p-3 font-bold flex justify-between items-center shadow-sm">
                             <div class="flex items-center gap-2"><span>🔵 Equipe Azul</span></div>
-                            <span id="count-azul" class="bg-white/20 px-2.5 py-0.5 rounded-full text-sm font-semibold">0</span>
+                            <span id="count-azul" class="bg-white/20 px-2.5 py-0.5 rounded-full text-sm font-semibold">0</span><div class="flex items-center gap-1"><button type="button" onclick="exportTeamRegistrations('Azul')" class="px-2 py-1 rounded-md bg-white/20 hover:bg-white/30 text-[10px] font-semibold" aria-label="Exportar inscrições da equipe Azul">Exportar</button><button type="button" onclick="openTeamImport('Azul')" class="px-2 py-1 rounded-md bg-white/20 hover:bg-white/30 text-[10px] font-semibold" aria-label="Importar inscrições para equipe Azul">Importar</button></div>
                         </div>
-                        <div class="p-3 flex-grow">
+                        <div class="p-3 flex-grow max-h-[60vh] overflow-y-auto">
                             <ul id="list-azul" class="space-y-2 text-sm empty:hidden"></ul>
                             <div id="empty-azul" class="text-center text-slate-400 py-8 text-sm italic">Nenhum inscrito.</div>
                         </div>
@@ -398,9 +417,9 @@
                     <div class="border border-yellow-300 rounded-xl overflow-hidden flex flex-col bg-yellow-50/30">
                         <div class="bg-yellow-400 text-yellow-900 p-3 font-bold flex justify-between items-center shadow-sm">
                             <div class="flex items-center gap-2"><span>🟡 Equipe Amarela</span></div>
-                            <span id="count-amarelo" class="bg-black/10 px-2.5 py-0.5 rounded-full text-sm font-semibold">0</span>
+                            <span id="count-amarelo" class="bg-black/10 px-2.5 py-0.5 rounded-full text-sm font-semibold">0</span><div class="flex items-center gap-1"><button type="button" onclick="exportTeamRegistrations('Amarelo')" class="px-2 py-1 rounded-md bg-white/20 hover:bg-white/30 text-[10px] font-semibold" aria-label="Exportar inscrições da equipe Amarelo">Exportar</button><button type="button" onclick="openTeamImport('Amarelo')" class="px-2 py-1 rounded-md bg-white/20 hover:bg-white/30 text-[10px] font-semibold" aria-label="Importar inscrições para equipe Amarelo">Importar</button></div>
                         </div>
-                        <div class="p-3 flex-grow">
+                        <div class="p-3 flex-grow max-h-[60vh] overflow-y-auto">
                             <ul id="list-amarelo" class="space-y-2 text-sm empty:hidden"></ul>
                             <div id="empty-amarelo" class="text-center text-slate-400 py-8 text-sm italic">Nenhum inscrito.</div>
                         </div>
@@ -410,9 +429,9 @@
                     <div class="border border-green-200 rounded-xl overflow-hidden flex flex-col bg-green-50/30">
                         <div class="bg-green-600 text-white p-3 font-bold flex justify-between items-center shadow-sm">
                             <div class="flex items-center gap-2"><span>🟢 Equipe Verde</span></div>
-                            <span id="count-verde" class="bg-white/20 px-2.5 py-0.5 rounded-full text-sm font-semibold">0</span>
+                            <span id="count-verde" class="bg-white/20 px-2.5 py-0.5 rounded-full text-sm font-semibold">0</span><div class="flex items-center gap-1"><button type="button" onclick="exportTeamRegistrations('Verde')" class="px-2 py-1 rounded-md bg-white/20 hover:bg-white/30 text-[10px] font-semibold" aria-label="Exportar inscrições da equipe Verde">Exportar</button><button type="button" onclick="openTeamImport('Verde')" class="px-2 py-1 rounded-md bg-white/20 hover:bg-white/30 text-[10px] font-semibold" aria-label="Importar inscrições para equipe Verde">Importar</button></div>
                         </div>
-                        <div class="p-3 flex-grow">
+                        <div class="p-3 flex-grow max-h-[60vh] overflow-y-auto">
                             <ul id="list-verde" class="space-y-2 text-sm empty:hidden"></ul>
                             <div id="empty-verde" class="text-center text-slate-400 py-8 text-sm italic">Nenhum inscrito.</div>
                         </div>
@@ -422,9 +441,9 @@
                     <div class="border border-red-200 rounded-xl overflow-hidden flex flex-col bg-red-50/30">
                         <div class="bg-red-600 text-white p-3 font-bold flex justify-between items-center shadow-sm">
                             <div class="flex items-center gap-2"><span>🔴 Equipe Vermelha</span></div>
-                            <span id="count-vermelho" class="bg-white/20 px-2.5 py-0.5 rounded-full text-sm font-semibold">0</span>
+                            <span id="count-vermelho" class="bg-white/20 px-2.5 py-0.5 rounded-full text-sm font-semibold">0</span><div class="flex items-center gap-1"><button type="button" onclick="exportTeamRegistrations('Vermelho')" class="px-2 py-1 rounded-md bg-white/20 hover:bg-white/30 text-[10px] font-semibold" aria-label="Exportar inscrições da equipe Vermelho">Exportar</button><button type="button" onclick="openTeamImport('Vermelho')" class="px-2 py-1 rounded-md bg-white/20 hover:bg-white/30 text-[10px] font-semibold" aria-label="Importar inscrições para equipe Vermelho">Importar</button></div>
                         </div>
-                        <div class="p-3 flex-grow">
+                        <div class="p-3 flex-grow max-h-[60vh] overflow-y-auto">
                             <ul id="list-vermelho" class="space-y-2 text-sm empty:hidden"></ul>
                             <div id="empty-vermelho" class="text-center text-slate-400 py-8 text-sm italic">Nenhum inscrito.</div>
                         </div>
@@ -598,6 +617,7 @@
         // State variables
         let validStudents = [];
         let registrations = [];
+        let editingRegistrationIndex = null;
         const gameFixtures = [
   {
     "date": "2026-11-30",
@@ -2714,6 +2734,7 @@
 ];
         let gameScores = {};
         let gameParticipants = {};
+        let modalityAttendance = {};
         let gameFixtureEdits = {};
         let simultaneousResults = {};
         let extraPoints = {};
@@ -2794,6 +2815,7 @@
             importFormRegistrations();
             loadGameScores();
             loadGameParticipants();
+            loadModalityAttendance();
             loadGameFixtureEdits();
             loadSimultaneousResults();
             loadExtraPoints();
@@ -2895,6 +2917,9 @@
             if (!localStorage.getItem('jogos_demo_participants_backup')) {
                 localStorage.setItem('jogos_demo_participants_backup',JSON.stringify(gameParticipants));
             }
+            if (!localStorage.getItem('jogos_demo_modality_attendance_backup')) {
+                localStorage.setItem('jogos_demo_modality_attendance_backup',JSON.stringify(modalityAttendance));
+            }
             if (!localStorage.getItem('jogos_demo_simultaneous_backup')) {
                 localStorage.setItem('jogos_demo_simultaneous_backup',JSON.stringify(simultaneousResults));
             }
@@ -2904,6 +2929,7 @@
 
             gameScores = {};
             gameParticipants = {};
+            modalityAttendance = {};
             gameFixtures.filter(match => match.phase === 'Final').forEach(match => {
                 const finalists = shuffle(teams).slice(0,2);
                 gameParticipants[match.id] = {a:finalists[0],b:finalists[1]};
@@ -2926,6 +2952,7 @@
 
             localStorage.setItem('jogos_game_scores',JSON.stringify(gameScores));
             localStorage.setItem('jogos_game_participants',JSON.stringify(gameParticipants));
+            localStorage.setItem('jogos_modality_attendance',JSON.stringify(modalityAttendance));
             localStorage.setItem('jogos_simultaneous_results',JSON.stringify(simultaneousResults));
             localStorage.setItem('jogos_extra_points',JSON.stringify(extraPoints));
             localStorage.setItem('jogos_demo_score_ids',JSON.stringify(gameFixtures.map(match => match.id)));
@@ -2959,6 +2986,11 @@
                 try { gameParticipants = JSON.parse(savedParticipants); } catch { gameParticipants = {}; }
                 localStorage.removeItem('jogos_demo_participants_backup');
             }
+            const savedAttendance = localStorage.getItem('jogos_demo_modality_attendance_backup');
+            if (savedAttendance !== null) {
+                try { modalityAttendance = JSON.parse(savedAttendance); } catch { modalityAttendance = {}; }
+                localStorage.removeItem('jogos_demo_modality_attendance_backup');
+            }
             const savedSimultaneous = localStorage.getItem('jogos_demo_simultaneous_backup');
             if (savedSimultaneous !== null) {
                 try { simultaneousResults = JSON.parse(savedSimultaneous); } catch { simultaneousResults = {}; }
@@ -2972,6 +3004,7 @@
             localStorage.removeItem('jogos_demo_score_ids');
             localStorage.setItem('jogos_game_scores',JSON.stringify(gameScores));
             localStorage.setItem('jogos_game_participants',JSON.stringify(gameParticipants));
+            localStorage.setItem('jogos_modality_attendance',JSON.stringify(modalityAttendance));
             localStorage.setItem('jogos_simultaneous_results',JSON.stringify(simultaneousResults));
             localStorage.setItem('jogos_extra_points',JSON.stringify(extraPoints));
             renderDashboard();
@@ -2989,7 +3022,25 @@
             try { gameParticipants = JSON.parse(localStorage.getItem('jogos_game_participants') || '{}'); }
             catch { gameParticipants = {}; }
         }
-        function loadGameFixtureEdits() {
+        function loadModalityAttendance() {
+            try { modalityAttendance = JSON.parse(localStorage.getItem('jogos_modality_attendance') || '{}'); }
+            catch { modalityAttendance = {}; }
+        }
+        function getAttendanceKey(registration) {
+            return encodeURIComponent([registration.name,registration.team,registration.turma].map(value => String(value || '').trim().toLocaleLowerCase('pt-BR')).join('|')).replace(/'/g,'%27');
+        }
+        function saveModalityAttendance(registrationIndex, encodedModality, status) {
+            const registration = registrations[registrationIndex];
+            if (!registration) return;
+            const modality = decodeURIComponent(encodedModality);
+            const key = getAttendanceKey(registration);
+            modalityAttendance[key] = modalityAttendance[key] || {};
+            if (modalityAttendance[key][modality] === status) delete modalityAttendance[key][modality];
+            else modalityAttendance[key][modality] = status;
+            if (!Object.keys(modalityAttendance[key]).length) delete modalityAttendance[key];
+            localStorage.setItem('jogos_modality_attendance',JSON.stringify(modalityAttendance));
+            renderDashboard();
+        }        function loadGameFixtureEdits() {
             try { gameFixtureEdits = JSON.parse(localStorage.getItem('jogos_game_fixture_edits') || '{}'); }
             catch { gameFixtureEdits = {}; }
             gameFixtures.forEach(match => {
@@ -3124,7 +3175,7 @@
                     <div class="flex flex-wrap items-center gap-2 mt-3">${scoreInput('a',saved.a,gameParticipants[match.id]?.a || match.teamA)}<span class="text-slate-400 font-bold">×</span>${scoreInput('b',saved.b,gameParticipants[match.id]?.b || match.teamB)}</div>
                     <p id="game-result-${match.id}" class="mt-2 text-xs font-semibold text-slate-500">${getGameResult(match.id)}</p>
                     <details class="mt-4 border-t border-slate-200 pt-3">
-                        <summary class="cursor-pointer text-sm font-semibold text-emerald-600 hover:text-emerald-500">Editar informações do jogo</summary>
+                        <summary onclick="if(!this.parentElement.open) return window.confirm('Deseja editar as informações desta partida?')" class="cursor-pointer text-sm font-semibold text-emerald-600 hover:text-emerald-500">Editar informações do jogo</summary>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
                             <label class="text-xs font-semibold text-slate-600">Data<input id="edit-${match.id}-date" type="date" value="${escapeGameText(match.date)}" class="block w-full mt-1 p-2 border border-slate-300 rounded-lg text-sm"></label>
                             <label class="text-xs font-semibold text-slate-600">Horário<input id="edit-${match.id}-time" type="time" value="${escapeGameText(match.time || '')}" class="block w-full mt-1 p-2 border border-slate-300 rounded-lg text-sm"></label>
@@ -3408,65 +3459,190 @@
             showToast(`${searchInput} inscrito na Equipe ${selectedTeam}!`, 'success');
         }
 
+        function openRegistrationEdit(index) {
+            const registration = registrations[index];
+            if (!registration) return;
+            if (!window.confirm(`Deseja editar a inscrição de ${registration.name}?`)) return;
+            editingRegistrationIndex = index;
+            document.getElementById('edit-registration-name').value = registration.name || '';
+            document.getElementById('edit-registration-class').value = registration.turma || '';
+            const genderSelect = document.getElementById('edit-registration-gender');
+            const genders = ['Feminino','Masculino','Mistos','Não informado'];
+            if (registration.gender && !genders.includes(registration.gender)) genders.push(registration.gender);
+            genderSelect.innerHTML = genders.map(gender => `<option value="${escapeGameText(gender)}" ${registration.gender === gender ? 'selected' : ''}>${escapeGameText(gender)}</option>`).join('');
+            const currentModalities = Array.isArray(registration.modality) ? registration.modality : [registration.modality].filter(Boolean);
+            const oldKey = getAttendanceKey(registration);
+            const options = [...document.querySelectorAll('#modality-selector label')].map(label => ({value:label.querySelector('input')?.value,label:label.querySelector('span')?.textContent.trim()})).filter(option => option.value);
+            currentModalities.forEach(modality => { if (!options.some(option => option.value === modality)) options.push({value:modality,label:modality}); });
+            document.getElementById('edit-registration-modalities').innerHTML = options.map(option => {
+                const code = encodeURIComponent(option.value).replace(/'/g,'%27');
+                const selected = currentModalities.includes(option.value);
+                const attendance = modalityAttendance[oldKey]?.[option.value] || '';
+                return `<div class="grid grid-cols-1 gap-2 rounded-lg border border-slate-200 p-2 sm:grid-cols-[1fr_10rem] sm:items-center"><label class="flex items-center gap-2 text-sm font-medium text-slate-700"><input type="checkbox" name="edit-registration-modality" value="${escapeGameText(option.value)}" ${selected ? 'checked' : ''} onchange="toggleEditAttendanceField('${code}',this.checked)" class="h-4 w-4 rounded border-slate-300">${escapeGameText(option.label)}</label><select id="edit-attendance-${code}" ${selected ? '' : 'disabled'} class="rounded-md border border-slate-300 p-2 text-xs"><option value="" ${attendance ? '' : 'selected'}>Sem marcação</option><option value="presente" ${attendance === 'presente' ? 'selected' : ''}>Presente</option><option value="ausente" ${attendance === 'ausente' ? 'selected' : ''}>Ausente</option></select></div>`;
+            }).join('');
+            document.getElementById('registration-edit-modal').classList.remove('hidden');
+            document.getElementById('edit-registration-name').focus();
+        }
+        function toggleEditAttendanceField(encodedModality, enabled) {
+            const field = document.getElementById(`edit-attendance-${encodedModality}`);
+            if (field) field.disabled = !enabled;
+        }
+        function closeRegistrationEdit() {
+            document.getElementById('registration-edit-modal').classList.add('hidden');
+            editingRegistrationIndex = null;
+        }
+        function saveRegistrationEdit() {
+            const index = editingRegistrationIndex;
+            const registration = registrations[index];
+            if (!registration) { closeRegistrationEdit(); return; }
+            const name = document.getElementById('edit-registration-name').value.trim();
+            const turma = document.getElementById('edit-registration-class').value.trim();
+            const gender = document.getElementById('edit-registration-gender').value;
+            const modalities = [...document.querySelectorAll('#edit-registration-modalities input[name="edit-registration-modality"]:checked')].map(input => input.value);
+            if (!name || !turma || !gender || !modalities.length) { showToast('Preencha nome, turma, sexo e selecione ao menos uma modalidade.','error'); return; }
+            const normalize = value => String(value || '').trim().replace(/\s+/g,' ').toLocaleLowerCase('pt-BR');
+            if (registrations.some((other,otherIndex) => otherIndex !== index && normalize(other.name) === normalize(name))) { showToast('Já existe outra inscrição com esse nome.','error'); return; }
+            if (!window.confirm(`Confirma as alterações da inscrição de ${name}?`)) return;
+            const previousKey = getAttendanceKey(registration);
+            const previousAttendance = modalityAttendance[previousKey] || {};
+            const updated = {...registration,name,turma,gender,modality:modalities};
+            const newKey = getAttendanceKey(updated);
+            const attendance = {};
+            modalities.forEach(modality => {
+                const code = encodeURIComponent(modality).replace(/'/g,'%27');
+                const selected = document.getElementById(`edit-attendance-${code}`)?.value || '';
+                if (selected === 'presente' || selected === 'ausente') attendance[modality] = selected;
+            });
+            delete modalityAttendance[previousKey];
+            if (Object.keys(attendance).length) modalityAttendance[newKey] = {...(modalityAttendance[newKey] || {}),...attendance};
+            registrations[index] = updated;
+            const baseStudent = validStudents.find(student => normalize(student.name) === normalize(registration.name));
+            if (baseStudent) { baseStudent.name = name; baseStudent.turma = turma; }
+            else validStudents.push({name,turma});
+            saveState();
+            localStorage.setItem('jogos_modality_attendance',JSON.stringify(modalityAttendance));
+            updateDatalist();
+            closeRegistrationEdit();
+            renderDashboard();
+            showToast(`Inscrição de ${name} atualizada.`,'success');
+        }
         function deleteRegistration(index) {
             const registration = registrations[index];
             if (!registration) return;
             if (!window.confirm(`Excluir a inscrição de ${registration.name} da Equipe ${registration.team}? O estudante continuará na base.`)) return;
 
+            const attendanceKey = getAttendanceKey(registration);
+            delete modalityAttendance[attendanceKey];
             registrations.splice(index, 1);
             saveState();
+            localStorage.setItem('jogos_modality_attendance',JSON.stringify(modalityAttendance));
             renderDashboard();
             showToast(`Inscrição de ${registration.name} excluída.`, 'success');
         }
 
         function renderDashboard() {
+            const search = String(document.getElementById('registration-search')?.value || '').trim().toLocaleLowerCase('pt-BR');
             ['azul', 'amarelo', 'verde', 'vermelho'].forEach(color => {
                 document.getElementById(`list-${color}`).innerHTML = '';
                 document.getElementById(`count-${color}`).textContent = '0';
-                document.getElementById(`empty-${color}`).style.display = 'block';
+                const empty = document.getElementById(`empty-${color}`);
+                empty.style.display = 'block';
+                empty.textContent = search ? 'Nenhum inscrito encontrado.' : 'Nenhum inscrito.';
             });
-
             const counts = { 'Azul': 0, 'Amarelo': 0, 'Verde': 0, 'Vermelho': 0 };
-
-            registrations.forEach((reg, index) => {
-                const teamKey = reg.team.toLowerCase();
+            registrations.forEach((reg,index) => {
+                const modalitiesArray = Array.isArray(reg.modality) ? reg.modality : [reg.modality].filter(Boolean);
+                const searchable = [reg.name,reg.turma,reg.gender,reg.team,...modalitiesArray].join(' ').toLocaleLowerCase('pt-BR');
+                if (search && !searchable.includes(search)) return;
+                const teamKey = String(reg.team || '').toLowerCase();
                 const listElement = document.getElementById(`list-${teamKey}`);
                 const emptyMsg = document.getElementById(`empty-${teamKey}`);
-                
-                if (listElement) {
-                    counts[reg.team]++;
-                    emptyMsg.style.display = 'none';
-                    
-                    let modalitiesArray = Array.isArray(reg.modality) ? reg.modality : [reg.modality];
-                    const modalitiesHTML = modalitiesArray.map(mod => `
-                        <span class="inline-flex items-center gap-1 text-[10px] sm:text-xs font-semibold px-2 py-0.5 rounded bg-white text-slate-600 border border-slate-200 whitespace-nowrap">
-                            ${modalityIcons[mod]} ${mod}
-                        </span>
-                    `).join('');
-
-                    const li = document.createElement('li');
-                    li.className = 'bg-white p-2.5 rounded-lg border border-slate-100 shadow-sm flex flex-col xl:flex-row xl:justify-between xl:items-start xl:items-center gap-2 hover:border-slate-300 transition-colors';
-                    li.innerHTML = `
-                        <div class="flex flex-col">
-                            <span class="font-semibold text-slate-700 truncate" title="${reg.name}">${reg.name}</span>
-                            <span class="text-xs text-slate-500">${reg.turma} • ${reg.gender}</span>
-                        </div>
-                        <div class="flex flex-wrap gap-1 mt-1 xl:mt-0">
-                            ${modalitiesHTML}
-                        </div>
-                        <button type="button" onclick="deleteRegistration(${index})" aria-label="Excluir inscrição de ${reg.name}" class="self-start text-xs font-semibold text-red-600 hover:text-red-800 hover:bg-red-50 border border-red-200 rounded-md px-2.5 py-1.5 transition">
-                            Excluir
-                        </button>
-                    `;
-                    listElement.appendChild(li);
-                }
+                if (!listElement || counts[reg.team] === undefined) return;
+                counts[reg.team]++;
+                emptyMsg.style.display = 'none';
+                const attendanceKey = getAttendanceKey(reg);
+                const modalitiesHTML = modalitiesArray.map(mod => {
+                    const status = modalityAttendance[attendanceKey]?.[mod] || '';
+                    const presentClass = status === 'presente' ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-white text-slate-600 border-slate-300';
+                    const absentClass = status === 'ausente' ? 'bg-red-600 text-white border-red-600' : 'bg-white text-slate-600 border-slate-300';
+                    const modalityCode = encodeURIComponent(mod);
+                    return `<span class="inline-flex items-center gap-1.5 p-1 rounded-lg border border-slate-200 bg-slate-50"><span class="text-[10px] sm:text-xs font-semibold px-1 whitespace-nowrap">${modalityIcons[mod] || ''} ${escapeGameText(mod)}</span><button type="button" onclick="saveModalityAttendance(${index},'${modalityCode}','presente')" aria-label="Marcar ${escapeGameText(reg.name)} presente em ${escapeGameText(mod)}" title="Presente" class="px-1.5 py-1 text-[10px] leading-none font-bold border rounded-md ${presentClass}">✓ P</button><button type="button" onclick="saveModalityAttendance(${index},'${modalityCode}','ausente')" aria-label="Marcar ${escapeGameText(reg.name)} ausente em ${escapeGameText(mod)}" title="Ausente" class="px-1.5 py-1 text-[10px] leading-none font-bold border rounded-md ${absentClass}">× A</button></span>`;
+                }).join('');
+                const li = document.createElement('li');
+                li.className = 'bg-white p-2.5 rounded-lg border border-slate-100 shadow-sm grid grid-cols-[minmax(0,1fr)_auto] items-start gap-2 hover:border-slate-300 transition-colors';
+                li.innerHTML = `<div class="min-w-0"><div class="flex flex-col"><span class="font-semibold text-slate-700 truncate" title="${escapeGameText(reg.name)}">${escapeGameText(reg.name)}</span><span class="text-xs text-slate-500">${escapeGameText(reg.turma || '')} • ${escapeGameText(reg.gender || 'Mistos')}</span></div><div class="mt-2 flex flex-wrap gap-1">${modalitiesHTML}</div></div><div class="col-start-2 row-start-1 flex w-[4.5rem] shrink-0 flex-col gap-1 self-start"><button type="button" onclick="openRegistrationEdit(${index})" aria-label="Editar inscrição de ${escapeGameText(reg.name)}" class="w-full rounded-md border border-indigo-200 px-2 py-1.5 text-xs font-semibold text-indigo-600 hover:bg-indigo-50">Editar</button><button type="button" onclick="deleteRegistration(${index})" aria-label="Excluir inscrição de ${escapeGameText(reg.name)}" class="w-full rounded-md border border-red-200 px-2 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50">Excluir</button></div>`;
+                listElement.appendChild(li);
             });
-
-            Object.keys(counts).forEach(team => {
-                document.getElementById(`count-${team.toLowerCase()}`).textContent = counts[team];
-            });
+            Object.keys(counts).forEach(team => document.getElementById(`count-${team.toLowerCase()}`).textContent = counts[team]);
         }
-
+        function openTeamImport(team) {
+            const input = document.getElementById('team-registration-file');
+            input.dataset.team = team;
+            input.click();
+        }
+        function exportTeamRegistrations(team) {
+            const teamRegistrations = registrations.filter(registration => registration.team === team).map(registration => ({...registration}));
+            const nameKeys = new Set(teamRegistrations.map(registration => String(registration.name || '').trim().toLocaleLowerCase('pt-BR')));
+            const teamStudents = validStudents.filter(student => nameKeys.has(String(student.name || '').trim().toLocaleLowerCase('pt-BR'))).map(student => ({...student}));
+            const attendanceKeys = [...new Set(teamRegistrations.map(getAttendanceKey))];
+            const attendance = Object.fromEntries(attendanceKeys.filter(key => modalityAttendance[key]).map(key => [key,modalityAttendance[key]]));
+            const backup = {format:'jogos-equipe-inscricoes',version:2,team,exportedAt:new Date().toISOString(),students:teamStudents,registrations:teamRegistrations,attendance};
+            const blob = new Blob([JSON.stringify(backup,null,2)],{type:'application/json'});
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `inscricoes-equipe-${team.toLocaleLowerCase('pt-BR')}.json`;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            URL.revokeObjectURL(url);
+            showToast(`${teamRegistrations.length} inscrição(ões) da Equipe ${team} exportada(s).`,'success');
+        }
+        async function importTeamRegistrations(event) {
+            const input = event.target;
+            const file = input.files && input.files[0];
+            if (!file) return;
+            try {
+                const backup = JSON.parse(await file.text());
+                const targetTeam = input.dataset.team;
+                const validTeams = ['Azul','Amarelo','Verde','Vermelho'];
+                if (backup?.format !== 'jogos-equipe-inscricoes' || ![1,2].includes(backup?.version) || !validTeams.includes(backup.team) || !Array.isArray(backup.registrations) || !Array.isArray(backup.students)) throw new Error('O arquivo não contém inscrições de equipe válidas.');
+                if (backup.team !== targetTeam) throw new Error(`Este arquivo é da Equipe ${backup.team}. Selecione Importar no quadro dessa equipe.`);
+                if (backup.registrations.some(registration => registration.team !== targetTeam || !registration.name || !Array.isArray(registration.modality))) throw new Error('O arquivo contém inscrições inválidas ou de outra equipe.');
+                const normalize = value => String(value || '').trim().replace(/\s+/g,' ').toLocaleLowerCase('pt-BR');
+                const conflicts = backup.registrations.filter(incoming => registrations.some(existing => normalize(existing.name) === normalize(incoming.name) && existing.team !== targetTeam));
+                if (conflicts.length) throw new Error(`Não foi possível importar: ${[...new Set(conflicts.map(reg => reg.name))].slice(0,3).join(', ')} já está(ão) cadastrado(s) em outra equipe.`);
+                backup.registrations.forEach(incoming => {
+                    const existing = registrations.find(reg => normalize(reg.name) === normalize(incoming.name) && reg.team === targetTeam);
+                    if (existing) {
+                        existing.turma = incoming.turma || existing.turma;
+                        existing.gender = incoming.gender || existing.gender;
+                        existing.modality = [...new Set([...(Array.isArray(existing.modality) ? existing.modality : [existing.modality].filter(Boolean)),...incoming.modality])];
+                        existing.sourceNotes = [...new Set([...(existing.sourceNotes || []),...(incoming.sourceNotes || [])])];
+                    } else registrations.push({...incoming,modality:[...incoming.modality]});
+                });
+                const studentsToImport = [...backup.students,...backup.registrations.map(reg => ({name:reg.name,turma:reg.turma || ''}))];
+                studentsToImport.forEach(incoming => {
+                    if (!incoming?.name) return;
+                    const existing = validStudents.find(student => normalize(student.name) === normalize(incoming.name));
+                    if (existing) { if (incoming.turma) existing.turma = incoming.turma; }
+                    else validStudents.push({name:incoming.name,turma:incoming.turma || ''});
+                });
+                if (backup.version >= 2) Object.entries(backup.attendance || {}).forEach(([studentKey,marks]) => {
+                    modalityAttendance[studentKey] = {...(modalityAttendance[studentKey] || {}),...marks};
+                });
+                saveState();
+                localStorage.setItem('jogos_modality_attendance',JSON.stringify(modalityAttendance));
+                updateDatalist();
+                renderDashboard();
+                renderGameFixtures();
+                showToast(`${backup.registrations.length} inscrição(ões) importada(s) para a Equipe ${targetTeam}.`,'success');
+            } catch (error) {
+                showToast(error.message || 'Não foi possível carregar as inscrições da equipe.','error');
+            } finally {
+                input.value = '';
+            }
+        }
         function resetForm() {
             document.getElementById('student-search').value = '';
             document.getElementById('student-turma').value = '';
@@ -3627,38 +3803,6 @@
             URL.revokeObjectURL(url);
             showToast('Base de estudantes exportada com sucesso!', 'success');
         }
-        function exportToCSV() {
-            if (registrations.length === 0) { showToast('Não há inscrições para exportar.', 'error'); return; }
-
-            const separator = ';';
-            let csvContent = `Nome${separator}Turma${separator}Gênero${separator}Equipe${separator}Modalidades\n`;
-
-            registrations.forEach(reg => {
-                const escapeCSV = (str) => `"${String(str).replace(/"/g, '""')}"`;
-                const name = escapeCSV(reg.name);
-                const turma = escapeCSV(reg.turma);
-                const gender = escapeCSV(reg.gender);
-                const team = escapeCSV(reg.team);
-                const modalitiesArray = Array.isArray(reg.modality) ? reg.modality : [reg.modality];
-                const modalities = escapeCSV(modalitiesArray.join(', ')); 
-                
-                csvContent += `${name}${separator}${turma}${separator}${gender}${separator}${team}${separator}${modalities}\n`;
-            });
-
-            const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement("a");
-            const url = URL.createObjectURL(blob);
-            link.setAttribute("href", url);
-            link.setAttribute("download", "inscricoes_jogos_integrados.csv");
-            link.style.visibility = 'hidden';
-            
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
-            showToast('Arquivo CSV baixado com sucesso!', 'success');
-        }
-
         function exportBoard() {
             if (registrations.length === 0) {
                 showToast('Não há inscrições para exportar.', 'error');
