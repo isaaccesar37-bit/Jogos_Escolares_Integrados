@@ -1,20 +1,20 @@
 {
   "id": "./",
-  "name": "Jogos Escolares Integrados",
-  "short_name": "Jogos Escolares",
-  "description": "Gerenciamento de inscrições dos Jogos Escolares Integrados.",
+  "name": "IX JIBG — Jogos Integrados SESI Benjamin Guimarães",
+  "short_name": "IX JIBG",
+  "description": "Inscrições e resultados dos Jogos Integrados SESI Benjamin Guimarães.",
   "lang": "pt-BR",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "background_color": "#070b18",
-  "theme_color": "#0b1020",
+  "theme_color": "#2f70bf",
   "icons": [
     {
-      "src": "icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "src": "logo.png",
+      "sizes": "408x408",
+      "type": "image/png",
+      "purpose": "any"
     }
   ]
 }

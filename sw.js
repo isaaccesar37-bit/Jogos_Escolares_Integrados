@@ -1,5 +1,5 @@
-const CACHE_NAME = "jogos-escolares-v27";
-const APP_SHELL = ["./", "./index.html", "./manifest.webmanifest", "./icon.svg", "./stats.js"];
+const CACHE_NAME = "jogos-escolares-v40";
+const APP_SHELL = ["./", "./index.html", "./manifest.webmanifest", "./icon.svg", "./logo.png", "./forms-data.js", "./stats.js"];
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL)));
   self.skipWaiting();

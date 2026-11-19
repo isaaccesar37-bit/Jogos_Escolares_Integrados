@@ -1,7 +1,7 @@
 function collectTeamResults() {
     const teams = ['Azul', 'Amarelo', 'Verde', 'Vermelho'];
-    const modalities = ['Dodboll', 'Futsal', 'Peteca', 'Jogos e Brincadeiras', 'Natação', 'Voleibol', 'Tenis de mesa', 'Totó', 'Xadrez', 'Jogos Eletrônicos', 'Oficina de Artes', 'Cubo mágico', 'Batalha Sumo Robótico', 'Torta na Cara', 'Uno', 'Soletrando', 'Quizz'];
-    const standings = Object.fromEntries(teams.map(team => [team, {team, points:0, matchPoints:0, simultaneousPoints:0, scoreFor:0, played:0, wins:0, draws:0, losses:0}]));
+    const modalities = ['Dodboll', 'Futsal', 'Peteca', 'Jogos e Brincadeiras', 'Natação', 'Voleibol', 'Tenis de mesa', 'Totó', 'Xadrez', 'Jogos Eletrônicos', 'Oficina de Artes', 'Batalha Sumo Robótico', 'Atividade Inglês', 'Circuito de Artes', 'Cubo mágico', 'Torta na Cara', 'Uno', 'Soletrando', 'Quizz'];
+    const standings = Object.fromEntries(teams.map(team => [team, {team, points:0, matchPoints:0, simultaneousPoints:0, extraPoints:0, scoreFor:0, played:0, wins:0, draws:0, losses:0}]));
     const pointsByGenderModality = {};
     const completedMatches = gameFixtures.filter(match => {
         const score = gameScores[match.id];
@@ -54,12 +54,19 @@ function collectTeamResults() {
         });
     });
 
+    Object.values(extraPoints || {}).forEach(values => {
+        teams.forEach(team => {
+            const points = Math.max(0, Number(values?.[team]) || 0);
+            standings[team].points += points;
+            standings[team].extraPoints += points;
+        });
+    });
     const ranked = Object.values(standings).sort((a,b) => b.points - a.points || b.scoreFor - a.scoreFor || teams.indexOf(a.team) - teams.indexOf(b.team));
     let position = 0;
     ranked.forEach((team,index) => {
         const previous = ranked[index - 1];
         if (!previous || team.points !== previous.points || team.scoreFor !== previous.scoreFor) position = index + 1;
-        team.position = team.played || team.simultaneousPoints ? position : null;
+        team.position = team.played || team.simultaneousPoints || team.extraPoints ? position : null;
     });
     return {teams, modalities, standings, ranked, pointsByGenderModality, completedMatches};
 }
@@ -68,7 +75,8 @@ function renderStatistics() {
     const {teams, modalities, standings, ranked, pointsByGenderModality, completedMatches} = collectTeamResults();
     const colors = {Azul:'#2563eb', Amarelo:'#ca8a04', Verde:'#16a34a', Vermelho:'#dc2626'};
     const teamCounts = teams.map(team => registrations.filter(reg => reg.team === team).length);
-    const genderTotals = ['Feminino','Masculino'].map(gender => registrations.filter(reg => reg.gender === gender).length);
+    const genderCategories = ['Feminino','Masculino','Não informado'];
+    const genderTotals = genderCategories.map(gender => registrations.filter(reg => (reg.gender || 'Não informado') === gender).length);
     const modalityTotals = modalities.map(modality => registrations.filter(reg => {
         const selected = Array.isArray(reg.modality) ? reg.modality : [reg.modality];
         return selected.includes(modality);
@@ -77,7 +85,7 @@ function renderStatistics() {
     const maxModality = Math.max(0, ...modalityTotals);
     const teamIndex = teamCounts.indexOf(maxTeam);
     const modalityIndex = modalityTotals.indexOf(maxModality);
-    const leader = ranked.find(team => team.played || team.simultaneousPoints);
+    const leader = ranked.find(team => team.played || team.simultaneousPoints || team.extraPoints);
     document.getElementById('stats-summary').innerHTML = [
         ['Estudantes inscritos', String(registrations.length)],
         ['Equipe com mais inscritos', registrations.length ? `Equipe ${teams[teamIndex]} · ${maxTeam}` : 'Sem inscrições'],
@@ -92,17 +100,17 @@ function renderStatistics() {
         const color = colors[team];
         return `<div class="rounded-lg border border-slate-200 bg-slate-50 p-3 flex items-center justify-between gap-2">
             <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full" style="background:${color}"></span><span class="font-semibold text-slate-700">Equipe ${team}</span></div>
-            <div class="text-right"><div class="font-bold text-indigo-700">${result.points} pts finais</div><div class="text-xs text-slate-500">Tabela ${result.matchPoints} + Simultâneos ${result.simultaneousPoints}</div><div class="text-xs text-slate-500">${result.scoreFor} no placar</div></div>
+            <div class="text-right"><div class="font-bold text-indigo-700">${result.points} pts finais</div><div class="text-xs text-slate-500">Tabela ${result.matchPoints} + Simultâneos ${result.simultaneousPoints} + Extra ${result.extraPoints}</div><div class="text-xs text-slate-500">${result.scoreFor} no placar</div></div>
         </div>`;
     }).join('');
     const body = document.getElementById('stats-standings-body');
     const empty = document.getElementById('stats-standings-empty');
-    empty.classList.toggle('hidden', ranked.some(team => team.played || team.simultaneousPoints));
+    empty.classList.toggle('hidden', ranked.some(team => team.played || team.simultaneousPoints || team.extraPoints));
     body.innerHTML = ranked.map(team => `<tr>
         <td class="px-3 py-2 font-semibold">${team.position ?? '—'}</td>
         <td class="px-3 py-2 font-semibold">Equipe ${team.team}</td>
         <td class="px-3 py-2 font-bold text-indigo-700">${team.points}</td>
-        <td class="px-3 py-2">${team.matchPoints}</td><td class="px-3 py-2">${team.simultaneousPoints}</td>
+        <td class="px-3 py-2">${team.matchPoints}</td><td class="px-3 py-2">${team.simultaneousPoints}</td><td class="px-3 py-2">${team.extraPoints}</td>
         <td class="px-3 py-2">${team.played}</td><td class="px-3 py-2">${team.wins}</td>
         <td class="px-3 py-2">${team.draws}</td><td class="px-3 py-2">${team.losses}</td>
         <td class="px-3 py-2">${team.scoreFor}</td>
@@ -122,8 +130,8 @@ function renderStatistics() {
     drawHorizontalBarChart('stats-team-total', teams.map(team => `Equipe ${team}`), [
         {label:'Inscritos', values:teamCounts, itemColors:teams.map(team => colors[team])}
     ], 120);
-    drawHorizontalBarChart('stats-team-gender', ['Feminino','Masculino'], [
-        {label:'Inscritos', values:genderTotals, itemColors:['#db2777','#2563eb']}
+    drawHorizontalBarChart('stats-team-gender', genderCategories, [
+        {label:'Inscritos', values:genderTotals, itemColors:['#db2777','#2563eb','#64748b']}
     ], 120);
     ['Masculino','Feminino'].forEach(gender => {
         const id = gender === 'Masculino' ? 'stats-male-modalities' : 'stats-female-modalities';

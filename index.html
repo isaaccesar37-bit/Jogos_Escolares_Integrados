@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#0b1020">
+    <meta name="theme-color" content="#2f70bf">
     <link rel="manifest" href="manifest.webmanifest">
-    <link rel="icon" href="icon.svg" type="image/svg+xml">
-    <title>Jogos Integrados - Inscrições</title>
+    <link rel="icon" href="logo.png" type="image/png">
+    <title>IX JIBG | Inscrições</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -105,7 +105,6 @@
         body.theme-light .header-control:hover { background:#ecfdf5; border-color:#059669; }
         @media (max-width:700px) {
             .header-layout { grid-template-columns:1fr; gap:.85rem; }
-            .header-spacer { display:none; }
             .header-controls { justify-content:center; }
             header.bg-indigo-600 { padding-top:1.2rem; padding-bottom:1.2rem; }
             .header-title h1 { font-size:1.5rem; }
@@ -132,6 +131,36 @@
         /* Modal Animation */
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         .modal-enter { animation: fadeIn 0.2s ease-out forwards; }
+        .header-logo { width:150px; height:150px; margin-left:.5rem; object-fit:contain; }
+        @media (max-width:700px) {
+            .header-layout { grid-template-columns:1fr; gap:.85rem; }
+            .header-logo { width:110px; height:110px; margin:0 auto; }
+            .header-title h1 { font-size:1.3rem; }
+            .header-title p { max-width:230px; line-height:1.3; }
+        }
+        /* Identidade visual IX JIBG */
+        header.bg-indigo-600 { background:linear-gradient(115deg,#111827,#171e2a 58%,#132747) !important; border-bottom:1px solid #24456e; }
+        header h1 { color:#8db7ef !important; }
+        .header-logo { display:block; width:150px; height:150px; object-fit:contain; margin:0; border:0; border-radius:0; box-shadow:none; }
+        .tab-button[aria-selected="true"] { color:#f8fbff !important; background:#2f70bf !important; box-shadow:0 4px 14px #2f70bf33; }
+        .bg-indigo-600, .bg-emerald-600 { background-color:#2f70bf !important; }
+        .hover\:bg-indigo-700:hover, .hover\:bg-emerald-700:hover { background-color:#3987d9 !important; }
+        .text-indigo-700, .text-indigo-600, .text-indigo-500, .text-emerald-600, .text-emerald-500 { color:#8db7ef !important; }
+        .border-indigo-600, .border-indigo-500 { border-color:#2f70bf !important; }
+        .bg-indigo-50 { background-color:#17273d !important; }
+        .border-indigo-100, .border-indigo-200 { border-color:#294a73 !important; }
+        input:focus, select:focus, textarea:focus { border-color:#2f70bf !important; --tw-ring-color:#2f70bf !important; }
+        .header-control:hover { border-color:#2f70bf; }
+        ::selection { color:#f8fbff; background:#2f70bf; }
+        body.theme-light header.bg-indigo-600 { background:linear-gradient(115deg,#ffffff,#f2f7ff 58%,#eaf3ff) !important; border-bottom-color:#a9c4e4; }
+        body.theme-light header h1 { color:#23558c !important; }
+        body.theme-light .tab-button[aria-selected="true"] { color:#f8fbff !important; background:#2f70bf !important; }
+        body.theme-light .text-indigo-700, body.theme-light .text-indigo-600, body.theme-light .text-indigo-500, body.theme-light .text-emerald-600, body.theme-light .text-emerald-500 { color:#23558c !important; }
+        body.theme-light .border-indigo-600, body.theme-light .border-indigo-500 { border-color:#2f70bf !important; }
+        body.theme-light .bg-indigo-50 { background-color:#eff6ff !important; }
+        body.theme-light .border-indigo-100, body.theme-light .border-indigo-200 { border-color:#c7dcf5 !important; }
+        body.theme-light .header-control:hover { background:#eff6ff; border-color:#2f70bf; }
+        @media (max-width:700px) { .header-logo { width:110px; height:110px; margin:0 auto; } }
     </style>
 </head>
 <body class="bg-slate-50 min-h-screen text-slate-800">
@@ -158,12 +187,10 @@
 
     <header class="bg-indigo-600 text-white shadow-md py-6 mb-8">
         <div class="header-layout max-w-7xl mx-auto px-4">
-            <div class="header-spacer" aria-hidden="true"></div>
+            <img class="header-logo" src="logo.png" alt="Logo branca IX JIBG — Jogos Integrados SESI Benjamin Guimarães">
             <div class="header-title">
-                <h1 class="text-2xl sm:text-3xl font-bold flex items-center gap-2">
-                    🏆 Jogos Escolares Integrados
-                </h1>
-                <p class="mt-1 text-indigo-100 text-sm sm:text-base">Sistema de Gerenciamento de Inscrições</p>
+                <h1 class="text-2xl sm:text-3xl font-bold flex items-center gap-2">IX JIBG</h1>
+                <p class="mt-1 text-indigo-100 text-sm sm:text-base">Jogos Integrados SESI Benjamin Guimarães</p>
             </div>
             <div class="header-controls">
                 <button id="fullscreen-toggle" type="button" onclick="toggleFullscreen()" class="header-control" aria-label="Exibir em tela cheia" title="Exibir em tela cheia"><span aria-hidden="true">⛶</span><span id="fullscreen-label">Tela cheia</span></button>
@@ -177,6 +204,7 @@
             <button id="tab-inscricao" type="button" role="tab" aria-selected="true" aria-controls="pane-inscricao" onclick="switchTab('inscricao')" class="tab-button whitespace-nowrap px-5 py-3 font-semibold text-sm border-b-2 border-indigo-600 text-indigo-700">Inscrição</button>
             <button id="tab-jogos" type="button" role="tab" aria-selected="false" aria-controls="pane-jogos" onclick="switchTab('jogos')" class="tab-button whitespace-nowrap px-5 py-3 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-indigo-700">Jogos Tabela</button>
             <button id="tab-jogos-simultaneos" type="button" role="tab" aria-selected="false" aria-controls="pane-jogos-simultaneos" onclick="switchTab('jogos-simultaneos')" class="tab-button whitespace-nowrap px-5 py-3 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-indigo-700">Jogos Simultâneos</button>
+            <button id="tab-pontuacao-extra" type="button" role="tab" aria-selected="false" aria-controls="pane-pontuacao-extra" onclick="switchTab('pontuacao-extra')" class="tab-button whitespace-nowrap px-5 py-3 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-indigo-700">Pontuação Extra</button>
             <button id="tab-estatisticas" type="button" role="tab" aria-selected="false" aria-controls="pane-estatisticas" onclick="switchTab('estatisticas')" class="tab-button whitespace-nowrap px-5 py-3 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-indigo-700">Estatísticas</button>
             <button id="tab-dados" type="button" role="tab" aria-selected="false" aria-controls="pane-dados" onclick="switchTab('dados')" class="tab-button whitespace-nowrap px-5 py-3 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-indigo-700">Dados</button>
         </div>
@@ -287,12 +315,19 @@
                             <span class="text-sm font-medium text-slate-700">🎨 Oficina de Artes</span>
                         </label>
                         <label class="flex items-center space-x-2 cursor-pointer p-2.5 border border-slate-200 bg-slate-50 rounded-lg hover:bg-white hover:border-slate-300 transition duration-200">
-                            <input type="checkbox" name="modality" value="Cubo mágico" class="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer">
-                            <span class="text-sm font-medium text-slate-700">🧩 Cubo mágico</span>
-                        </label>
-                        <label class="flex items-center space-x-2 cursor-pointer p-2.5 border border-slate-200 bg-slate-50 rounded-lg hover:bg-white hover:border-slate-300 transition duration-200">
                             <input type="checkbox" name="modality" value="Batalha Sumo Robótico" class="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer">
                             <span class="text-sm font-medium text-slate-700">🤖 Batalha Sumo Robótico</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer p-2.5 border border-slate-200 bg-slate-50 rounded-lg hover:bg-white hover:border-slate-300 transition duration-200">
+                            <input type="checkbox" name="modality" value="Atividade Inglês" class="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer">
+                            <span class="text-sm font-medium text-slate-700">Atividade Inglês</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer p-2.5 border border-slate-200 bg-slate-50 rounded-lg hover:bg-white hover:border-slate-300 transition duration-200">
+                            <input type="checkbox" name="modality" value="Circuito de Artes" class="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer">
+                            <span class="text-sm font-medium text-slate-700">🎨 Circuito de Artes</span>
+                        </label>                        <label class="flex items-center space-x-2 cursor-pointer p-2.5 border border-slate-200 bg-slate-50 rounded-lg hover:bg-white hover:border-slate-300 transition duration-200">
+                            <input type="checkbox" name="modality" value="Cubo mágico" class="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer">
+                            <span class="text-sm font-medium text-slate-700">🧩 Cubo mágico</span>
                         </label>
                         <label class="flex items-center space-x-2 cursor-pointer p-2.5 border border-slate-200 bg-slate-50 rounded-lg hover:bg-white hover:border-slate-300 transition duration-200">
                             <input type="checkbox" name="modality" value="Torta na Cara" class="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer">
@@ -437,6 +472,14 @@
             </section>
             <section id="simultaneous-modalities" class="grid grid-cols-1 xl:grid-cols-2 gap-4"></section>
         </section>
+        <section id="pane-pontuacao-extra" role="tabpanel" aria-labelledby="tab-pontuacao-extra" class="hidden space-y-6">
+            <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+                <h2 class="text-xl font-bold text-slate-800">Pontuação Extra</h2>
+                <p class="text-sm text-slate-500 mt-1">Informe manualmente os pontos de cada equipe nas atividades especiais. Os valores são salvos automaticamente neste navegador e somados à classificação final.</p>
+                <div id="extra-points-team-totals" class="grid grid-cols-2 lg:grid-cols-4 gap-3 mt-5"></div>
+            </section>
+            <section id="extra-points-modalities" class="grid grid-cols-1 xl:grid-cols-2 gap-4"></section>
+        </section>
         <section id="pane-estatisticas" role="tabpanel" aria-labelledby="tab-estatisticas" class="hidden space-y-6">
             <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
                 <h2 class="text-xl font-bold text-slate-800">Estatísticas das equipes</h2>
@@ -446,11 +489,11 @@
             <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
                 <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2 mb-4">
                     <div><h3 class="text-lg font-bold text-slate-800">Classificação das equipes</h3>
-                    <p class="text-xs text-slate-500 mt-1">Pontuação final = Jogos Tabela (vitória 3, empate 1, derrota 0) + Jogos Simultâneos (150, 130, 110 ou 90 por colocação). Em empate, vence quem marcou mais pontos nos placares.</p></div>
+                    <p class="text-xs text-slate-500 mt-1">Pontuação final = Jogos Tabela + Jogos Simultâneos + Pontuação Extra. Em empate, vence quem marcou mais pontos nos placares.</p></div>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm text-left">
-                        <thead class="text-xs uppercase text-slate-500 bg-slate-50"><tr><th class="px-3 py-2">Pos.</th><th class="px-3 py-2">Equipe</th><th class="px-3 py-2">Pts finais</th><th class="px-3 py-2">Jogos Tabela</th><th class="px-3 py-2">Jogos Simultâneos</th><th class="px-3 py-2">PJ</th><th class="px-3 py-2">V</th><th class="px-3 py-2">E</th><th class="px-3 py-2">D</th><th class="px-3 py-2">Placar a favor</th></tr></thead>
+                        <thead class="text-xs uppercase text-slate-500 bg-slate-50"><tr><th class="px-3 py-2">Pos.</th><th class="px-3 py-2">Equipe</th><th class="px-3 py-2">Pts finais</th><th class="px-3 py-2">Jogos Tabela</th><th class="px-3 py-2">Jogos Simultâneos</th><th class="px-3 py-2">Pontuação Extra</th><th class="px-3 py-2">PJ</th><th class="px-3 py-2">V</th><th class="px-3 py-2">E</th><th class="px-3 py-2">D</th><th class="px-3 py-2">Placar a favor</th></tr></thead>
                         <tbody id="stats-standings-body" class="divide-y divide-slate-100"></tbody>
                     </table>
                 </div>
@@ -517,14 +560,20 @@
                 </div>
                 <p class="text-xs text-slate-400 mt-3 text-center">Total na base: <span id="student-count" class="font-bold text-slate-600">0</span> estudantes</p>
 
-                <button onclick="exportStudentBaseToCSV()" class="w-full mt-3 bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-lg font-semibold text-sm shadow-sm transition flex items-center justify-center gap-2">
+                <div class="mt-4 border-t border-slate-100 pt-4">
+                    <h3 class="text-sm font-bold text-slate-800">Backup completo do aplicativo</h3>
+                    <p class="text-xs text-slate-500 mt-1">Inclui estudantes, inscrições, resultados dos jogos, classificações simultâneas, pontuação extra e demais dados salvos neste navegador.</p>
+                    <button onclick="exportAllData()" class="w-full mt-3 bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-lg font-semibold text-sm shadow-sm transition">Exportar todos os dados (JSON)</button>
+                    <input id="all-data-file" type="file" accept=".json,application/json" class="hidden" onchange="importAllData(event)">
+                    <button onclick="document.getElementById('all-data-file').click()" class="w-full mt-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 py-2.5 rounded-lg font-semibold text-sm transition">Carregar todos os dados (JSON)</button>
+                </div>                <button onclick="exportStudentBaseToCSV()" class="w-full mt-3 bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-lg font-semibold text-sm shadow-sm transition flex items-center justify-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                    Exportar base de estudantes (CSV)
+                    Exportar somente a base de estudantes (CSV)
                 </button>
                 <input id="student-base-file" type="file" accept=".csv,text/csv" class="hidden" onchange="importStudentBaseFromCSV(event)">
                 <button onclick="document.getElementById('student-base-file').click()" class="w-full mt-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 py-2.5 rounded-lg font-semibold text-sm transition flex items-center justify-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                    Carregar base de estudantes (CSV)
+                    Carregar somente a base de estudantes (CSV)
                 </button>
                 <p class="text-xs text-slate-400 mt-1">Importa Nome e Turma do CSV; nomes já existentes terão a turma atualizada.</p>
                 <div class="mt-4 border-t border-slate-100 pt-4">
@@ -543,6 +592,7 @@
         </section>
     </main>
 
+    <script src="./forms-data.js"></script>
     <script src="./stats.js"></script>
     <script>
         // State variables
@@ -2666,7 +2716,8 @@
         let gameParticipants = {};
         let gameFixtureEdits = {};
         let simultaneousResults = {};
-        const simultaneousModalities = ['Jogos e Brincadeiras','Natação','Xadrez','Jogos Eletrônicos','Oficina de Artes','Cubo mágico','Batalha Sumo Robótico','Torta na Cara','Uno','Soletrando','Quizz'];
+        let extraPoints = {};
+        const simultaneousModalities = ['Jogos e Brincadeiras','Natação','Xadrez','Jogos Eletrônicos','Oficina de Artes','Atividade Inglês','Batalha Sumo Robótico','Circuito de Artes','Cubo mágico','Torta na Cara','Uno','Soletrando','Quizz'];
         const simultaneousPoints = [150,130,110,90];
         const schoolTeams = ['Azul','Amarelo','Verde','Vermelho'];
 
@@ -2683,6 +2734,8 @@
             'Xadrez': '♟️',
             'Jogos Eletrônicos': '🎮',
             'Oficina de Artes': '🎨',
+            'Atividade Inglês': '📘',
+            'Circuito de Artes': '🎨',
             'Cubo mágico': '🧩',
             'Batalha Sumo Robótico': '🤖',
             'Torta na Cara': '🥧',
@@ -2704,7 +2757,7 @@
             document.getElementById('theme-label').textContent = isLight ? 'Tema escuro' : 'Tema claro';
             themeButton.setAttribute('aria-label',isLight ? 'Mudar para tema escuro' : 'Mudar para tema claro');
             themeButton.title = isLight ? 'Mudar para tema escuro' : 'Mudar para tema claro';
-            document.querySelector('meta[name="theme-color"]').content = isLight ? '#f1f5f9' : '#0b1020';
+            document.querySelector('meta[name="theme-color"]').content = isLight ? '#eaf3ff' : '#2f70bf';
             if (savePreference) localStorage.setItem('jogos_theme_mode',isLight ? 'light' : 'dark');
         }
 
@@ -2738,20 +2791,60 @@
         window.onload = () => {
             initializeTheme();
             loadState();
+            importFormRegistrations();
             loadGameScores();
             loadGameParticipants();
             loadGameFixtureEdits();
             loadSimultaneousResults();
+            loadExtraPoints();
             updateDatalist();
             renderDashboard();
             renderGameFixtures();
             renderSimultaneousGames();
-            if (localStorage.getItem('jogos_demo_seed_v3') !== 'loaded') loadDemoData();
+            if (localStorage.getItem('jogos_demo_seed_v3') !== 'loaded' && localStorage.getItem('jogos_forms_import_v4') !== 'loaded') loadDemoData();
         };
 
+        function importFormRegistrations() {
+            const marker = 'jogos_forms_import_v4';
+            if (localStorage.getItem(marker) === 'loaded') return;
+            registrations = registrations.map(reg => {
+                const modalities = Array.isArray(reg.modality) ? reg.modality : [reg.modality].filter(Boolean);
+                const renamed = modalities.map(mod => mod === 'Copa Lego' ? 'Batalha Sumo Robótico' : mod);
+                return { ...reg, modality: [...new Set(renamed)] };
+            });
+            const source = Array.isArray(window.jogosFormRegistrationData) ? window.jogosFormRegistrationData : [];
+            if (!source.length) return;
+            const normalize = value => String(value || '').trim().replace(/\s+/g,' ').toLocaleLowerCase('pt-BR');
+            source.forEach((entry,index) => {
+                const nameKey = normalize(entry.name), classKey = normalize(entry.turma), teamKey = normalize(entry.team);
+                const candidates = registrations.filter(reg => !reg.demo && normalize(reg.name) === nameKey && normalize(reg.turma) === classKey && normalize(reg.team) === teamKey);
+                const exact = candidates.find(reg => normalize(reg.gender) === normalize(entry.gender));
+                const existing = exact || (candidates.length === 1 ? candidates[0] : null);
+                if (existing) {
+                    const current = Array.isArray(existing.modality) ? existing.modality : existing.modality ? [existing.modality] : [];
+                    existing.modality = [...new Set([...current,...entry.modality])];
+                    if ((!existing.gender || existing.gender === 'Não informado') && entry.gender !== 'Não informado') existing.gender = entry.gender;
+                    existing.sourceNotes = [...new Set([...(Array.isArray(existing.sourceNotes) ? existing.sourceNotes : []),...(entry.sourceNotes || [])])];
+                    if (!existing.turma && entry.turma) existing.turma = entry.turma;
+                } else {
+                    registrations.push({...entry,modality:[...entry.modality],sourceNotes:[...(entry.sourceNotes || [])],timestamp:Date.now()+index});
+                }
+                const baseStudent = validStudents.find(student => normalize(student.name) === nameKey);
+                if (!baseStudent) validStudents.push({name:entry.name,turma:entry.turma});
+                else if (!baseStudent.turma && entry.turma) baseStudent.turma = entry.turma;
+            });
+            localStorage.setItem(marker,'loaded');
+            saveState();
+            const missingClassCount = source.filter(entry => !entry.turma).length;
+            const unknownGenderCount = source.filter(entry => entry.gender === 'Não informado').length;
+            const summary = [`${source.length} inscrições cadastradas`];
+            if (missingClassCount) summary.push(`${missingClassCount} sem turma`);
+            if (unknownGenderCount) summary.push(`${unknownGenderCount} sem gênero informado`);
+            showToast(summary.join(' · ') + '.','success');
+        }
         function loadDemoData() {
             const teams = ['Azul','Amarelo','Verde','Vermelho'];
-            const modalities = ['Dodboll','Futsal','Peteca','Jogos e Brincadeiras','Natação','Voleibol','Tenis de mesa','Totó','Xadrez','Jogos Eletrônicos','Oficina de Artes','Cubo mágico','Batalha Sumo Robótico','Torta na Cara','Uno','Soletrando','Quizz'];
+            const modalities = ['Dodboll','Futsal','Peteca','Jogos e Brincadeiras','Natação','Voleibol','Tenis de mesa','Totó','Xadrez','Jogos Eletrônicos','Oficina de Artes','Batalha Sumo Robótico','Atividade Inglês','Circuito de Artes','Cubo mágico','Torta na Cara','Uno','Soletrando','Quizz'];
             const classNames = ['1º A','1º B','2º A','2º B','3º A','3º B','4º A','4º B','5º A','5º B','6º A','6º B','7º A','7º B','8º A','8º B','9º A','9º B','1º EM','2º EM','3º EM'];
             const shuffle = items => {
                 const result = [...items];
@@ -2805,6 +2898,9 @@
             if (!localStorage.getItem('jogos_demo_simultaneous_backup')) {
                 localStorage.setItem('jogos_demo_simultaneous_backup',JSON.stringify(simultaneousResults));
             }
+            if (!localStorage.getItem('jogos_demo_extra_points_backup')) {
+                localStorage.setItem('jogos_demo_extra_points_backup',JSON.stringify(extraPoints));
+            }
 
             gameScores = {};
             gameParticipants = {};
@@ -2823,10 +2919,15 @@
                 const ranking = shuffle(teams);
                 simultaneousResults[modality] = Object.fromEntries(ranking.map((team,index) => [index+1,team]));
             });
+            const extraModalities = ['Grito de Guerra','Bandeira das Equipes','Líderes de Torcida','Arrecadação de Roupa'];
+            extraPoints = Object.fromEntries(extraModalities.map(modality => [modality,
+                Object.fromEntries(teams.map(team => [team,Math.floor(Math.random() * 151)]))
+            ]));
 
             localStorage.setItem('jogos_game_scores',JSON.stringify(gameScores));
             localStorage.setItem('jogos_game_participants',JSON.stringify(gameParticipants));
             localStorage.setItem('jogos_simultaneous_results',JSON.stringify(simultaneousResults));
+            localStorage.setItem('jogos_extra_points',JSON.stringify(extraPoints));
             localStorage.setItem('jogos_demo_score_ids',JSON.stringify(gameFixtures.map(match => match.id)));
             localStorage.setItem('jogos_demo_seed_v3','loaded');
             saveState();
@@ -2863,10 +2964,16 @@
                 try { simultaneousResults = JSON.parse(savedSimultaneous); } catch { simultaneousResults = {}; }
                 localStorage.removeItem('jogos_demo_simultaneous_backup');
             }
+            const savedExtraPoints = localStorage.getItem('jogos_demo_extra_points_backup');
+            if (savedExtraPoints !== null) {
+                try { extraPoints = JSON.parse(savedExtraPoints); } catch { extraPoints = {}; }
+                localStorage.removeItem('jogos_demo_extra_points_backup');
+            }
             localStorage.removeItem('jogos_demo_score_ids');
             localStorage.setItem('jogos_game_scores',JSON.stringify(gameScores));
             localStorage.setItem('jogos_game_participants',JSON.stringify(gameParticipants));
             localStorage.setItem('jogos_simultaneous_results',JSON.stringify(simultaneousResults));
+            localStorage.setItem('jogos_extra_points',JSON.stringify(extraPoints));
             renderDashboard();
             renderGameFixtures();
             renderSimultaneousGames();
@@ -2892,6 +2999,32 @@
         function loadSimultaneousResults() {
             try { simultaneousResults = JSON.parse(localStorage.getItem('jogos_simultaneous_results') || '{}'); }
             catch { simultaneousResults = {}; }
+        }
+        function loadExtraPoints() {
+            try { extraPoints = JSON.parse(localStorage.getItem('jogos_extra_points') || '{}'); }
+            catch { extraPoints = {}; }
+        }
+        function renderExtraPoints() {
+            const totals = Object.fromEntries(schoolTeams.map(team => [team,0]));
+            Object.values(extraPoints).forEach(values => schoolTeams.forEach(team => totals[team] += Number(values?.[team]) || 0));
+            document.getElementById('extra-points-team-totals').innerHTML = schoolTeams.map(team => `<div class="rounded-lg border border-slate-200 bg-slate-50 p-3 flex justify-between items-center"><span class="font-semibold text-slate-700">Equipe ${team}</span><strong class="text-emerald-600">${totals[team]} pts</strong></div>`).join('');
+            const modalities = ['Grito de Guerra','Bandeira das Equipes','Líderes de Torcida','Arrecadação de Roupa'];
+            document.getElementById('extra-points-modalities').innerHTML = modalities.map((modality,index) => {
+                const saved = extraPoints[modality] || {};
+                const rows = schoolTeams.map((team,teamIndex) => `<label class="grid grid-cols-[1fr_7rem] items-center gap-3 text-sm"><span class="font-semibold text-slate-700">Equipe ${team}</span><input type="number" min="0" step="1" inputmode="numeric" aria-label="Pontos da Equipe ${team} em ${modality}" value="${Number(saved[team]) || 0}" onchange="saveExtraPoints(${index},${teamIndex},this.value)" class="w-full p-2 text-right border border-slate-300 rounded-lg"></label>`).join('');
+                return `<article class="bg-white rounded-xl shadow-sm border border-slate-200 p-5"><h3 class="font-bold text-slate-800 mb-4">${modality}</h3><div class="space-y-3">${rows}</div></article>`;
+            }).join('');
+        }
+        function saveExtraPoints(modalityIndex, teamIndex, rawValue) {
+            const modalities = ['Grito de Guerra','Bandeira das Equipes','Líderes de Torcida','Arrecadação de Roupa'];
+            const modality = modalities[modalityIndex], team = schoolTeams[teamIndex];
+            const points = Math.max(0, Number.parseInt(rawValue,10) || 0);
+            extraPoints[modality] = extraPoints[modality] || {};
+            if (points) extraPoints[modality][team] = points; else delete extraPoints[modality][team];
+            if (!Object.keys(extraPoints[modality]).length) delete extraPoints[modality];
+            localStorage.setItem('jogos_extra_points',JSON.stringify(extraPoints));
+            renderExtraPoints();
+            renderStatistics();
         }
         function renderSimultaneousGames() {
             const totals = Object.fromEntries(schoolTeams.map(team => [team,0]));
@@ -2923,6 +3056,7 @@
                 simultaneousResults[modality] = Object.fromEntries(teamsByPosition.map((team,index) => [index+1,team]));
             }
             localStorage.setItem('jogos_simultaneous_results',JSON.stringify(simultaneousResults));
+            localStorage.setItem('jogos_extra_points',JSON.stringify(extraPoints));
             renderSimultaneousGames();
             if (!document.getElementById('pane-estatisticas').classList.contains('hidden')) renderStatistics();
             showToast(`Classificação de ${modality} salva.`,`success`);
@@ -3090,7 +3224,7 @@
             if (!document.getElementById('pane-estatisticas').classList.contains('hidden')) renderStatistics();
         }
         function switchTab(tabName) {
-            ['inscricao', 'jogos', 'jogos-simultaneos', 'estatisticas', 'dados'].forEach(name => {
+            ['inscricao', 'jogos', 'jogos-simultaneos', 'pontuacao-extra', 'estatisticas', 'dados'].forEach(name => {
                 const active = name === tabName;
                 document.getElementById(`pane-${name}`).classList.toggle('hidden', !active);
                 const tab = document.getElementById(`tab-${name}`);
@@ -3102,6 +3236,7 @@
             });
             if (tabName === 'jogos') renderGameFixtures();
             if (tabName === 'jogos-simultaneos') renderSimultaneousGames();
+            if (tabName === 'pontuacao-extra') renderExtraPoints();
             if (tabName === 'estatisticas') renderStatistics();
         }
         function showToast(message, type = 'info') {
@@ -3358,6 +3493,51 @@
             if (storedRegistrations) registrations = JSON.parse(storedRegistrations);
         }
 
+        function exportAllData() {
+            const data = {};
+            for (let index = 0; index < localStorage.length; index++) {
+                const key = localStorage.key(index);
+                if (key && key.startsWith('jogos_')) data[key] = localStorage.getItem(key);
+            }
+            const backup = { format: 'jogos-escolares-integrados-backup', version: 1, exportedAt: new Date().toISOString(), data };
+            const blob = new Blob([JSON.stringify(backup,null,2)],{type:'application/json'});
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `jogos-escolares-backup-${new Date().toISOString().slice(0,10)}.json`;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            URL.revokeObjectURL(url);
+            showToast('Backup completo exportado com sucesso.','success');
+        }
+
+        async function importAllData(event) {
+            const input = event.target;
+            const file = input.files && input.files[0];
+            if (!file) return;
+            try {
+                const backup = JSON.parse(await file.text());
+                if (backup?.format !== 'jogos-escolares-integrados-backup' || backup?.version !== 1 || !backup.data || typeof backup.data !== 'object' || Array.isArray(backup.data)) {
+                    throw new Error('Este arquivo não é um backup completo válido do aplicativo.');
+                }
+                const entries = Object.entries(backup.data);
+                if (entries.some(([key,value]) => !key.startsWith('jogos_') || typeof value !== 'string')) {
+                    throw new Error('O backup contém dados inválidos.');
+                }
+                if (!window.confirm('Carregar este backup substituirá os dados atuais do aplicativo neste navegador. Deseja continuar?')) return;
+                for (let index = localStorage.length - 1; index >= 0; index--) {
+                    const key = localStorage.key(index);
+                    if (key && key.startsWith('jogos_')) localStorage.removeItem(key);
+                }
+                entries.forEach(([key,value]) => localStorage.setItem(key,value));
+                window.location.reload();
+            } catch (error) {
+                showToast(error.message || 'Não foi possível carregar o backup.','error');
+            } finally {
+                input.value = '';
+            }
+        }
         function parseStudentBaseCSV(text) {
             const firstLine = text.split(/\r?\n/, 1)[0] || '';
             const delimiter = (firstLine.match(/;/g) || []).length >= (firstLine.match(/,/g) || []).length ? ';' : ',';
@@ -3488,7 +3668,7 @@
             // Agrupamento dos dados: Equipe > Modalidade > Gênero
             const printData = {};
             const teams = ['Azul', 'Amarelo', 'Verde', 'Vermelho'];
-            const modalities = ['Dodboll', 'Futsal', 'Peteca', 'Jogos e Brincadeiras', 'Natação', 'Voleibol', 'Tenis de mesa', 'Totó', 'Xadrez', 'Jogos Eletrônicos', 'Oficina de Artes', 'Cubo mágico', 'Batalha Sumo Robótico', 'Torta na Cara', 'Uno', 'Soletrando', 'Quizz', 'Futebol', 'Queimada', 'Vôlei', 'Robótica'];
+            const modalities = ['Dodboll', 'Futsal', 'Peteca', 'Jogos e Brincadeiras', 'Natação', 'Voleibol', 'Tenis de mesa', 'Totó', 'Xadrez', 'Jogos Eletrônicos', 'Oficina de Artes', 'Batalha Sumo Robótico', 'Atividade Inglês', 'Circuito de Artes', 'Cubo mágico', 'Torta na Cara', 'Uno', 'Soletrando', 'Quizz', 'Futebol', 'Queimada', 'Vôlei', 'Robótica'];
             const genders = ['Feminino', 'Masculino']; // Ordem exigida
 
             registrations.forEach(reg => {
@@ -3549,7 +3729,7 @@
                             body { padding: 0; }
                             @page { margin: 1.5cm; }
                         }
-                    </style>
+</style>
                 </head>
                 <body>
             `;
