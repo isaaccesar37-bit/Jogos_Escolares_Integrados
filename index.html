@@ -164,7 +164,12 @@
         body.theme-light .border-indigo-100, body.theme-light .border-indigo-200 { border-color:#c7dcf5 !important; }
         body.theme-light .header-control:hover { background:#eff6ff; border-color:#2f70bf; }
         @media (max-width:700px) { .header-logo { width:110px; height:110px; margin:0 auto; } }
-    </style>
+        body.theme-light { color:#23558c !important; }
+        body.theme-light .text-slate-800, body.theme-light .text-slate-700, body.theme-light .text-slate-600, body.theme-light .text-slate-500, body.theme-light .text-slate-400 { color:#23558c !important; }
+        body.theme-light .text-indigo-700, body.theme-light .text-indigo-600, body.theme-light .text-indigo-500, body.theme-light .text-emerald-700, body.theme-light .text-emerald-600, body.theme-light .text-emerald-500 { color:#23558c !important; }
+        body.theme-light #stats-standings-body td, body.theme-light #stats-simultaneous-body td, body.theme-light #stats-standings-body .text-slate-400, body.theme-light #stats-simultaneous-body .text-slate-400 { color:#23558c !important; }
+        body.theme-light #list-azul li .text-slate-700, body.theme-light #list-amarelo li .text-slate-700, body.theme-light #list-verde li .text-slate-700, body.theme-light #list-vermelho li .text-slate-700, body.theme-light #list-azul li .text-slate-500, body.theme-light #list-amarelo li .text-slate-500, body.theme-light #list-verde li .text-slate-500, body.theme-light #list-vermelho li .text-slate-500 { color:#23558c !important; }
+        body.theme-light #list-azul li > div > div.mt-2 > span > span, body.theme-light #list-amarelo li > div > div.mt-2 > span > span, body.theme-light #list-verde li > div > div.mt-2 > span > span, body.theme-light #list-vermelho li > div > div.mt-2 > span > span, body.theme-light #list-azul li button.bg-white, body.theme-light #list-amarelo li button.bg-white, body.theme-light #list-verde li button.bg-white, body.theme-light #list-vermelho li button.bg-white { color:#23558c !important; }    </style>
 </head>
 <body class="bg-slate-50 min-h-screen text-slate-800">
 
@@ -190,13 +195,13 @@
 
     <div id="registration-edit-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 backdrop-blur-sm px-3 py-4">
         <div class="w-full max-w-2xl max-h-[92vh] overflow-y-auto rounded-2xl border border-slate-300 bg-white p-5 shadow-2xl sm:p-6">
-            <div class="mb-5"><h2 class="text-xl font-bold text-slate-800">Editar inscrição</h2><p class="mt-1 text-sm text-slate-500">Ajuste os dados e confirme a presença por modalidade.</p></div>
+            <div class="mb-5"><h2 class="text-xl font-bold text-slate-800">Editar inscrição</h2><p class="mt-1 text-sm text-slate-500">Ajuste os dados e as modalidades. A presença começa como presente; marque A no cartão se o aluno faltar.</p></div>
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <label class="text-sm font-semibold text-slate-700 sm:col-span-2">Nome do estudante<input id="edit-registration-name" type="text" class="mt-1 block w-full rounded-lg border border-slate-300 p-2.5 text-sm"></label>
                 <label class="text-sm font-semibold text-slate-700">Turma<input id="edit-registration-class" type="text" class="mt-1 block w-full rounded-lg border border-slate-300 p-2.5 text-sm"></label>
                 <label class="text-sm font-semibold text-slate-700">Sexo<select id="edit-registration-gender" class="mt-1 block w-full rounded-lg border border-slate-300 p-2.5 text-sm"></select></label>
             </div>
-            <div class="mt-5"><h3 class="text-sm font-bold text-slate-800">Modalidades e presença</h3><div id="edit-registration-modalities" class="mt-2 max-h-72 space-y-2 overflow-y-auto rounded-xl border border-slate-200 p-3"></div></div>
+            <div class="mt-5"><h3 class="text-sm font-bold text-slate-800">Modalidades</h3><div id="edit-registration-modalities" class="mt-2 max-h-72 space-y-2 overflow-y-auto rounded-xl border border-slate-200 p-3"></div></div>
             <div class="mt-5 flex flex-wrap justify-end gap-2"><button type="button" onclick="closeRegistrationEdit()" class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-600">Cancelar</button><button type="button" onclick="saveRegistrationEdit()" class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white">Salvar alterações</button></div>
         </div>
     </div>    <header class="bg-indigo-600 text-white shadow-md py-6 mb-8">
@@ -3475,17 +3480,11 @@
             const options = [...document.querySelectorAll('#modality-selector label')].map(label => ({value:label.querySelector('input')?.value,label:label.querySelector('span')?.textContent.trim()})).filter(option => option.value);
             currentModalities.forEach(modality => { if (!options.some(option => option.value === modality)) options.push({value:modality,label:modality}); });
             document.getElementById('edit-registration-modalities').innerHTML = options.map(option => {
-                const code = encodeURIComponent(option.value).replace(/'/g,'%27');
                 const selected = currentModalities.includes(option.value);
-                const attendance = modalityAttendance[oldKey]?.[option.value] || '';
-                return `<div class="grid grid-cols-1 gap-2 rounded-lg border border-slate-200 p-2 sm:grid-cols-[1fr_10rem] sm:items-center"><label class="flex items-center gap-2 text-sm font-medium text-slate-700"><input type="checkbox" name="edit-registration-modality" value="${escapeGameText(option.value)}" ${selected ? 'checked' : ''} onchange="toggleEditAttendanceField('${code}',this.checked)" class="h-4 w-4 rounded border-slate-300">${escapeGameText(option.label)}</label><select id="edit-attendance-${code}" ${selected ? '' : 'disabled'} class="rounded-md border border-slate-300 p-2 text-xs"><option value="" ${attendance ? '' : 'selected'}>Sem marcação</option><option value="presente" ${attendance === 'presente' ? 'selected' : ''}>Presente</option><option value="ausente" ${attendance === 'ausente' ? 'selected' : ''}>Ausente</option></select></div>`;
+                return `<label class="flex items-center gap-2 rounded-lg border border-slate-200 p-2 text-sm font-medium text-slate-700"><input type="checkbox" name="edit-registration-modality" value="${escapeGameText(option.value)}" ${selected ? 'checked' : ''} class="h-4 w-4 rounded border-slate-300">${escapeGameText(option.label)}</label>`;
             }).join('');
             document.getElementById('registration-edit-modal').classList.remove('hidden');
             document.getElementById('edit-registration-name').focus();
-        }
-        function toggleEditAttendanceField(encodedModality, enabled) {
-            const field = document.getElementById(`edit-attendance-${encodedModality}`);
-            if (field) field.disabled = !enabled;
         }
         function closeRegistrationEdit() {
             document.getElementById('registration-edit-modal').classList.add('hidden');
@@ -3507,12 +3506,7 @@
             const previousAttendance = modalityAttendance[previousKey] || {};
             const updated = {...registration,name,turma,gender,modality:modalities};
             const newKey = getAttendanceKey(updated);
-            const attendance = {};
-            modalities.forEach(modality => {
-                const code = encodeURIComponent(modality).replace(/'/g,'%27');
-                const selected = document.getElementById(`edit-attendance-${code}`)?.value || '';
-                if (selected === 'presente' || selected === 'ausente') attendance[modality] = selected;
-            });
+            const attendance = Object.fromEntries(modalities.filter(modality => ['presente','ausente'].includes(previousAttendance[modality])).map(modality => [modality,previousAttendance[modality]]));
             delete modalityAttendance[previousKey];
             if (Object.keys(attendance).length) modalityAttendance[newKey] = {...(modalityAttendance[newKey] || {}),...attendance};
             registrations[index] = updated;
@@ -3562,7 +3556,7 @@
                 emptyMsg.style.display = 'none';
                 const attendanceKey = getAttendanceKey(reg);
                 const modalitiesHTML = modalitiesArray.map(mod => {
-                    const status = modalityAttendance[attendanceKey]?.[mod] || '';
+                    const status = modalityAttendance[attendanceKey]?.[mod] || 'presente';
                     const presentClass = status === 'presente' ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-white text-slate-600 border-slate-300';
                     const absentClass = status === 'ausente' ? 'bg-red-600 text-white border-red-600' : 'bg-white text-slate-600 border-slate-300';
                     const modalityCode = encodeURIComponent(mod);
@@ -3870,7 +3864,12 @@
 
             const html = `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Quadro de Inscrições</title><style>
                 *{box-sizing:border-box}body{font-family:Arial,"Helvetica Neue",sans-serif;color:#111;margin:0;padding:18px;background:#fff}.form-page{width:100%;margin:0 auto 30px;break-after:page;page-break-after:always}.form-page:last-child{break-after:auto;page-break-after:auto}header{text-align:center;text-transform:uppercase;margin:0 auto 12px;color:#111}header p{margin:0 0 6px}.form-title{font-size:14px;font-weight:700;letter-spacing:1px;color:#111}.teacher-note{margin:8px 0 10px;font-size:10px;font-weight:700;font-style:italic;letter-spacing:.2px;color:#111}table{width:100%;border-collapse:separate;border-spacing:0;table-layout:fixed;border:1px solid #111;border-radius:12px;overflow:hidden}th,td{border-right:1px solid #111;border-bottom:1px solid #111;padding:8px 10px;text-align:left;vertical-align:top}th:last-child,td:last-child{border-right:0}tbody tr:last-child td{border-bottom:0}thead tr:first-child th:first-child{border-radius:11px 11px 0 0}thead tr:nth-child(2) th:first-child{border-radius:0 0 0 0}thead tr:nth-child(2) th:last-child{border-radius:0 0 11px 0}thead tr:nth-child(2) th:first-child{border-radius:0 0 0 11px}tbody tr:last-child td:first-child{border-radius:0 0 0 11px}tbody tr:last-child td:last-child{border-radius:0 0 11px 0}thead tr:first-child th,.table-title{text-align:center!important;background:#fff!important;color:#111!important;font-size:13px;font-weight:700;letter-spacing:.7px;padding:9px;border-radius:11px 11px 0 0;-webkit-print-color-adjust:exact;print-color-adjust:exact}.team-amarelo,.team-vermelho,.team-verde,.team-azul{text-align:center;font-size:12px;font-weight:700;letter-spacing:.7px;background:#fff!important;color:#111!important}.team-amarelo{background:#fff!important;color:#111!important}.team-verde{background:#fff!important;color:#111!important}.team-azul{background:#fff!important;color:#111!important}.team-vermelho{background:#fff!important;color:#111!important}tbody tr:nth-child(even) td{background:#fff}td{height:31px;font-size:12px;line-height:1.35;text-transform:uppercase;overflow-wrap:anywhere;color:#111}tr{break-inside:avoid;page-break-inside:avoid}thead{display:table-header-group}@page{size:A4 landscape;margin:9mm}@media print{body{padding:0}.form-page{margin:0}table{border-radius:12px!important}thead tr:first-child th:first-child{border-radius:11px 11px 0 0!important}tbody tr:last-child td:first-child{border-radius:0 0 0 11px!important}tbody tr:last-child td:last-child{border-radius:0 0 11px 0!important}}
-                </style></head><body>${pages}<script>window.onload=()=>setTimeout(()=>window.print(),350);<\/script></body></html>`;
+                    body.theme-light { color:#23558c !important; }
+        body.theme-light .text-slate-800, body.theme-light .text-slate-700, body.theme-light .text-slate-600, body.theme-light .text-slate-500, body.theme-light .text-slate-400 { color:#23558c !important; }
+        body.theme-light .text-indigo-700, body.theme-light .text-indigo-600, body.theme-light .text-indigo-500, body.theme-light .text-emerald-700, body.theme-light .text-emerald-600, body.theme-light .text-emerald-500 { color:#23558c !important; }
+        body.theme-light #stats-standings-body td, body.theme-light #stats-simultaneous-body td, body.theme-light #stats-standings-body .text-slate-400, body.theme-light #stats-simultaneous-body .text-slate-400 { color:#23558c !important; }
+        body.theme-light #list-azul li .text-slate-700, body.theme-light #list-amarelo li .text-slate-700, body.theme-light #list-verde li .text-slate-700, body.theme-light #list-vermelho li .text-slate-700, body.theme-light #list-azul li .text-slate-500, body.theme-light #list-amarelo li .text-slate-500, body.theme-light #list-verde li .text-slate-500, body.theme-light #list-vermelho li .text-slate-500 { color:#23558c !important; }
+        body.theme-light #list-azul li > div > div.mt-2 > span > span, body.theme-light #list-amarelo li > div > div.mt-2 > span > span, body.theme-light #list-verde li > div > div.mt-2 > span > span, body.theme-light #list-vermelho li > div > div.mt-2 > span > span, body.theme-light #list-azul li button.bg-white, body.theme-light #list-amarelo li button.bg-white, body.theme-light #list-verde li button.bg-white, body.theme-light #list-vermelho li button.bg-white { color:#23558c !important; }    </style></head><body>${pages}<script>window.onload=()=>setTimeout(()=>window.print(),350);<\/script></body></html>`;
             const printWindow = window.open('', '_blank');
             if (!printWindow) {
                 showToast('O navegador bloqueou a janela de impressão. Permita pop-ups para exportar o quadro.', 'error');

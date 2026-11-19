@@ -151,9 +151,9 @@ function drawHorizontalBarChart(canvasId, labels, datasets, labelWidth) {
     const ratio = window.devicePixelRatio || 1;
     const lightTheme = document.body.classList.contains('theme-light');
     const gridColor = lightTheme ? '#e2e8f0' : '#334155';
-    const labelColor = lightTheme ? '#334155' : '#dbe5f2';
-    const secondaryLabelColor = lightTheme ? '#64748b' : '#a8b6ca';
-    const legendColor = lightTheme ? '#475569' : '#b6c3d6';
+    const labelColor = lightTheme ? '#23558c' : '#dbe5f2';
+    const secondaryLabelColor = lightTheme ? '#23558c' : '#a8b6ca';
+    const legendColor = lightTheme ? '#23558c' : '#b6c3d6';
     canvas.width = Math.round(width * ratio); canvas.height = Math.round(height * ratio);
     const ctx = canvas.getContext('2d');
     ctx.setTransform(ratio, 0, 0, ratio, 0, 0); ctx.clearRect(0, 0, width, height);
